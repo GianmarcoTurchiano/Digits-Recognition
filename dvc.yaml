@@ -30,10 +30,20 @@ stages:
       --patience 10 --epochs 100 --learning_rate 0.001 --weight_decay 1e-2 --random_seed 42
       --batch_size 64 --polynomial_scheduler_power 2.0
     deps:
+    - digits_recognition/modeling/classifier.py
     - digits_recognition/modeling/train.py
     - digits_recognition/load_dataset.py
     - digits_recognition/experiment_name.py
     - ./data/processed/val_set.pkl
     - ./data/processed/train_set.pkl
     outs:
+    - ./models/digit_classifier.pth
+  evaluate:
+    cmd: python digits_recognition/modeling/evaluate.py -t ./data/processed/test_set.pkl
+      -m ./models/digit_classifier.pth --random_seed 42 --batch_size 64
+    deps:
+    - digits_recognition/modeling/evaluate.py
+    - digits_recognition/modeling/classifier.py
+    - digits_recognition/load_dataset.py
+    - ./data/processed/test_set.pkl
     - ./models/digit_classifier.pth

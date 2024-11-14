@@ -10,20 +10,8 @@ import mlflow
 import os
 from dotenv import load_dotenv, set_key
 from digits_recognition.experiment_name import get_experiment_name
+from digits_recognition.modeling.classifier import DigitClassifier
 
-class DigitClassifier(nn.Module):
-    def __init__(self):
-        super(DigitClassifier, self).__init__()
-        self.flatten = nn.Flatten()
-        self.fc1 = nn.Linear(28 * 28, 128)
-        self.fc2 = nn.Linear(128, 10)
-
-    def forward(self, x):
-        x = self.flatten(x)
-        x = torch.relu(self.fc1(x))
-        x = self.fc2(x)
-        return x
-    
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     
@@ -62,7 +50,7 @@ if __name__ == '__main__':
 
     mlflow.set_experiment(experiment_name)
 
-    mlflow.start_run(run_name="training")
+    mlflow.start_run(run_name="Training")
     
     mlflow.log_param("epochs", args.epochs)
     mlflow.log_param("learning_rate", args.learning_rate)
@@ -113,19 +101,20 @@ if __name__ == '__main__':
 
         # Validation loop
 
-        model.eval()
-
         val_loss = 0
 
-        for images, labels in tqdm(val_loader, desc=f"Epoch [{epoch}/{args.epochs}], Validation", leave=False):
-            X = images.to(device)
-            y = labels.to(device)
+        model.eval()
 
-            logits = model(X)
+        with torch.no_grad():
+            for images, labels in tqdm(val_loader, desc=f"Epoch [{epoch}/{args.epochs}], Validation", leave=False):
+                X = images.to(device)
+                y = labels.to(device)
 
-            loss = criterion(logits, y)
+                logits = model(X)
 
-            val_loss += loss.item()
+                loss = criterion(logits, y)
+
+                val_loss += loss.item()
 
         avg_val_loss = val_loss / len(val_loader)
         

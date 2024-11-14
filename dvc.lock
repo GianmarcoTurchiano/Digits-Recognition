@@ -69,7 +69,7 @@ stages:
     cmd: python digits_recognition/modeling/train.py -t ./data/processed/train_set.pkl
       -v ./data/processed/val_set.pkl -m ./models/digit_classifier.pth --patience
       10 --epochs 100 --learning_rate 0.001 --weight_decay 1e-2 --random_seed 42 --batch_size
-      64 --polynomial_scheduler_power 2.0
+      64 --polynomial_scheduler_power 2.0 --normalize
     deps:
     - path: ./data/processed/train_set.pkl
       hash: md5
@@ -83,7 +83,7 @@ stages:
       isexec: true
     - path: digits_recognition/experiment_name.py
       hash: md5
-      md5: b1adb9c17f6c0b4cb95e40d13e48ebe3
+      md5: 960fad7f76ea74629b68364bd2769097
       size: 256
       isexec: true
     - path: digits_recognition/load_dataset.py
@@ -91,14 +91,48 @@ stages:
       md5: 19be58d10b4ab8f40c9dbf1d3b3b3024
       size: 548
       isexec: true
+    - path: digits_recognition/modeling/classifier.py
+      hash: md5
+      md5: f534ff76a4fe77cd8f0e8c8c575a7c3d
+      size: 390
+      isexec: true
     - path: digits_recognition/modeling/train.py
       hash: md5
-      md5: 6c1365ba0676a828f57f578ac9989f3b
-      size: 5016
+      md5: a2ac11c472132935c50b05cb752897d4
+      size: 4777
       isexec: true
     outs:
     - path: ./models/digit_classifier.pth
       hash: md5
-      md5: 2138a7aae93e97f11d7e19d8f5800216
+      md5: 202f53ffb3d24458287f869ee31591fe
       size: 409240
+      isexec: true
+  evaluate:
+    cmd: python digits_recognition/modeling/evaluate.py -t ./data/processed/test_set.pkl
+      -m ./models/digit_classifier.pth --random_seed 42 --batch_size 64 --normalize
+    deps:
+    - path: ./data/processed/test_set.pkl
+      hash: md5
+      md5: 5bca9cc2dfb6e121ecb7b9e39759d839
+      size: 7850211
+      isexec: true
+    - path: ./models/digit_classifier.pth
+      hash: md5
+      md5: 202f53ffb3d24458287f869ee31591fe
+      size: 409240
+      isexec: true
+    - path: digits_recognition/load_dataset.py
+      hash: md5
+      md5: 19be58d10b4ab8f40c9dbf1d3b3b3024
+      size: 548
+      isexec: true
+    - path: digits_recognition/modeling/classifier.py
+      hash: md5
+      md5: f534ff76a4fe77cd8f0e8c8c575a7c3d
+      size: 390
+      isexec: true
+    - path: digits_recognition/modeling/evaluate.py
+      hash: md5
+      md5: bbb52211c41111757dd23112310385d6
+      size: 2837
       isexec: true
