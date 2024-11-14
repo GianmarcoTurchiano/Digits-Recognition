@@ -1,13 +1,38 @@
-from digits_recognition.dataset import load_ubyte_images, load_ubyte_labels, save_dataset
 import argparse
 from sklearn.model_selection import train_test_split
 import pickle
+import numpy as np
+
+def load_ubyte_images(filename):
+    with open(filename, 'rb') as f:
+        # Skip the header (first 16 bytes for images)
+        f.read(16)
+        # Read the rest as a numpy array, reshape to 28x28 per image
+        data = np.frombuffer(f.read(), dtype=np.uint8).reshape(-1, 28, 28)
+    return data
+
+def load_ubyte_labels(filename):
+    with open(filename, 'rb') as f:
+        # Skip the header (first 8 bytes for labels)
+        f.read(8)
+        # Read the rest as a numpy array
+        labels = np.frombuffer(f.read(), dtype=np.uint8)
+    return labels
+
+def save_dataset(out_path, X, y):
+    with open(out_path, 'wb') as file:
+        pickle.dump({
+            'X': X,
+            'y': y
+        }, file)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     
-    parser.add_argument('-d', '--in_path', type=str)
-    parser.add_argument('-o', '--out_path', type=str)
+    parser.add_argument('-p', '--in_path', type=str)
+    parser.add_argument('-tr', '--train_set_path', type=str)
+    parser.add_argument('-ts', '--test_set_path', type=str)
+    parser.add_argument('-v', '--val_set_path', type=str)
     parser.add_argument('-r', '--validation_ratio', type=float)
     parser.add_argument('-s', '--split_seed', type=int)
 
@@ -23,7 +48,9 @@ if __name__ == '__main__':
     X_train, X_val, y_train, y_val = train_test_split(train_images, train_labels, stratify=train_labels,
                                                       test_size=args.validation_ratio, random_state=args.split_seed)
 
-    save_dataset(args.out_path, X_train, y_train, X_val, y_val, test_images, test_labels)
+    save_dataset(args.train_set_path, X_train, y_train)
+    save_dataset(args.val_set_path, X_val, y_val)
+    save_dataset(args.test_set_path, test_images, test_labels)
 
     # Check the shapes
     print("Training Images:", X_train.shape)

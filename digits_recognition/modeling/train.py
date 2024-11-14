@@ -1,14 +1,15 @@
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, TensorDataset
 import argparse
 import torch.optim as optim
 from torch.optim.lr_scheduler import PolynomialLR
 from tqdm import tqdm
-from digits_recognition.dataset import load_dataset
+from digits_recognition.load_dataset import load_dataset
 import dagshub
 import mlflow
-import hashlib
+import os
+from dotenv import load_dotenv, set_key
+from digits_recognition.experiment_name import get_experiment_name
 
 class DigitClassifier(nn.Module):
     def __init__(self):
@@ -26,47 +27,39 @@ class DigitClassifier(nn.Module):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     
-    parser.add_argument('-d', '--dataset_path', type=str)
+    parser.add_argument('-t', '--train_set_path', type=str)
+    parser.add_argument('-v', '--val_set_path', type=str)
     parser.add_argument('-m', '--model_path', type=str)
-    parser.add_argument('-p', '--patience', type=int)
+    parser.add_argument('-pat', '--patience', type=int)
     parser.add_argument('-e', '--epochs', type=int)
     parser.add_argument('-l', '--learning_rate', type=float)
     parser.add_argument('-w', '--weight_decay', type=float)
     parser.add_argument('-n', '--normalize', action='store_true')
     parser.add_argument('-s', '--random_seed', type=int)
     parser.add_argument('-b', '--batch_size', type=int)
+    parser.add_argument('-pow', '--polynomial_scheduler_power', type=float)
 
     args = parser.parse_args()
 
-    data = load_dataset(args.dataset_path)
-
     torch.manual_seed(args.random_seed)
 
-    X_train = torch.tensor(data['X_train'], dtype=torch.float32)
-    y_train = torch.tensor(data['y_train'], dtype=torch.long)
-    X_val = torch.tensor(data['X_val'], dtype=torch.float32)
-    y_val = torch.tensor(data['y_val'], dtype=torch.long)
-
-    if args.normalize:
-        X_train = X_train / 255.0
-        X_val = X_val / 255.0
-
-    train_dataset = TensorDataset(X_train, y_train)
-    val_dataset = TensorDataset(X_val, y_val)
-
-    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False)
+    train_loader = load_dataset(args.train_set_path, normalize=args.normalize, shuffle=True, batch_size=args.batch_size)
+    val_loader = load_dataset(args.val_set_path, normalize=args.normalize, shuffle=False, batch_size=args.batch_size)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = DigitClassifier().to(device)
 
-    # Create a unique identifier based on model and args
-    model_id = hashlib.sha256(str(model).encode()).hexdigest()[:8]
-    args_id = hashlib.sha256(str(args).encode()).hexdigest()[:8]
-    experiment_name = f"{model._get_name()} ({model_id}, {args_id})"
+    set_key('.env', 'CURRENT_EXPERIMENT_NAME', get_experiment_name(model, args))
 
-    dagshub.init(repo_owner="GianmarcoTurchiano", repo_name="Digits-Recognition", mlflow=True)
+    load_dotenv('.env')
+
+    repo_owner = os.getenv('DAGSHUB_REPO_OWNER')
+    repo_name = os.getenv('DAGSHUB_REPO_NAME')
+    experiment_name = os.getenv('CURRENT_EXPERIMENT_NAME')
+
+    dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
+
     mlflow.set_experiment(experiment_name)
 
     mlflow.start_run(run_name="training")
@@ -78,11 +71,12 @@ if __name__ == '__main__':
     mlflow.log_param("weight_decay", args.weight_decay)
     mlflow.log_param("random_seed", args.random_seed)
     mlflow.log_param("normalize", args.normalize)
+    mlflow.log_param("polynomial_scheduler_power", args.polynomial_scheduler_power)
 
     # Loss and optimizer
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
-    scheduler = PolynomialLR(optimizer, total_iters=args.epochs, power=2.0)
+    scheduler = PolynomialLR(optimizer, total_iters=args.epochs, power=args.polynomial_scheduler_power)
 
     best_val_loss = float('inf')
     epochs_no_improve = 0
@@ -92,7 +86,10 @@ if __name__ == '__main__':
 
         model.train()
 
-        tqdm.write(f"Learning rate: {scheduler.get_last_lr()}")
+        [last_lr] = scheduler.get_last_lr()
+
+        mlflow.log_metric("Learning rate", last_lr, step=epoch)
+        tqdm.write(f"Learning rate: {last_lr}")
         train_loss = 0
 
         for images, labels in tqdm(train_loader, desc=f"Epoch [{epoch}/{args.epochs}], Training", leave=False):

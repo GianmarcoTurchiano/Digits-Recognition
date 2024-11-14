@@ -1,31 +1,39 @@
 stages:
   download:
-    cmd: python digits_recognition/stages/dataset/download.py -o ./data/raw/archive.zip
+    cmd: python digits_recognition/dataset/download.py -o ./data/raw/archive.zip
     deps:
-    - digits_recognition/stages/dataset/download.py
+    - digits_recognition/dataset/download.py
     outs:
     - ./data/raw/archive.zip
   extract:
-    cmd: python digits_recognition/stages/dataset/extract.py -d ./data/raw/archive.zip
-      -o ./data/interim
+    cmd: python digits_recognition/dataset/extract.py -z ./data/raw/archive.zip
+      -o ./data/interim/unzipped
     deps:
-    - digits_recognition/stages/dataset/extract.py
+    - digits_recognition/dataset/extract.py
     - ./data/raw/archive.zip
     outs:
-    - ./data/interim
+    - ./data/interim/unzipped
   split:
-    cmd: python digits_recognition/stages/dataset/split.py -d ./data/interim -o ./data/processed/dataset.pkl
+    cmd: python digits_recognition/dataset/split.py -p ./data/interim/unzipped -tr ./data/processed/train_set.pkl
+      -ts ./data/processed/test_set.pkl -v ./data/processed/val_set.pkl
       --split_seed 42 --validation_ratio 0.15
     deps:
-    - digits_recognition/stages/dataset/split.py
-    - ./data/interim
+    - digits_recognition/dataset/split.py
+    - ./data/interim/unzipped
     outs:
-    - ./data/processed/dataset.pkl
+    - ./data/processed/val_set.pkl
+    - ./data/processed/test_set.pkl
+    - ./data/processed/train_set.pkl
   train:
-    cmd: python digits_recognition/modeling/train.py -d ./data/processed/dataset.pkl -m ./models/digit_classifier.pth 
-      --patience 10 --epochs 100 --learning_rate 0.001 --weight_decay 1e-2 --random_seed 42 --batch_size 64
+    cmd: python digits_recognition/modeling/train.py -t ./data/processed/train_set.pkl
+      -v ./data/processed/val_set.pkl -m ./models/digit_classifier.pth 
+      --patience 10 --epochs 100 --learning_rate 0.001 --weight_decay 1e-2 --random_seed 42
+      --batch_size 64 --polynomial_scheduler_power 2.0
     deps:
     - digits_recognition/modeling/train.py
-    - ./data/processed/dataset.pkl
+    - digits_recognition/load_dataset.py
+    - digits_recognition/experiment_name.py
+    - ./data/processed/val_set.pkl
+    - ./data/processed/train_set.pkl
     outs:
     - ./models/digit_classifier.pth

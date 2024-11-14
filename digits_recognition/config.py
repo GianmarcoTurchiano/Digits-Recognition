@@ -1,1 +1,0 @@
-DATASET_URL = r'https://www.kaggle.com/api/v1/datasets/download/hojjatk/mnist-dataset'
