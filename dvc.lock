@@ -36,7 +36,7 @@ stages:
       nfiles: 8
   split:
     cmd: python digits_recognition/stages/dataset/split.py -d ./data/interim -o ./data/processed/dataset.pkl
-      -s 42 -r 0.15
+      --split_seed 42 --validation_ratio 0.15
     deps:
     - path: ./data/interim
       hash: md5
@@ -53,4 +53,25 @@ stages:
       hash: md5
       md5: 0937e70cf13fb9378e8b6a59467b4a29
       size: 54950419
+      isexec: true
+  train:
+    cmd: python digits_recognition/modeling/train.py -d ./data/processed/dataset.pkl
+      -m ./models/digit_classifier.pth --patience 10 --epochs 100 --learning_rate
+      0.001 --weight_decay 1e-2 --random_seed 42 --batch_size 64
+    deps:
+    - path: ./data/processed/dataset.pkl
+      hash: md5
+      md5: 0937e70cf13fb9378e8b6a59467b4a29
+      size: 54950419
+      isexec: true
+    - path: digits_recognition/modeling/train.py
+      hash: md5
+      md5: ff158489c90c3318201929181bc86025
+      size: 5021
+      isexec: true
+    outs:
+    - path: ./models/digit_classifier.pth
+      hash: md5
+      md5: 2138a7aae93e97f11d7e19d8f5800216
+      size: 409240
       isexec: true

@@ -15,9 +15,17 @@ stages:
     - ./data/interim
   split:
     cmd: python digits_recognition/stages/dataset/split.py -d ./data/interim -o ./data/processed/dataset.pkl
-      -s 42 -r 0.15
+      --split_seed 42 --validation_ratio 0.15
     deps:
     - digits_recognition/stages/dataset/split.py
     - ./data/interim
     outs:
     - ./data/processed/dataset.pkl
+  train:
+    cmd: python digits_recognition/modeling/train.py -d ./data/processed/dataset.pkl -m ./models/digit_classifier.pth 
+      --patience 10 --epochs 100 --learning_rate 0.001 --weight_decay 1e-2 --random_seed 42 --batch_size 64
+    deps:
+    - digits_recognition/modeling/train.py
+    - ./data/processed/dataset.pkl
+    outs:
+    - ./models/digit_classifier.pth
