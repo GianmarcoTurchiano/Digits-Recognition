@@ -1,0 +1,23 @@
+stages:
+  download:
+    cmd: python digits_recognition/stages/dataset/download.py -o ./data/raw/archive.zip
+    deps:
+    - digits_recognition/stages/dataset/download.py
+    outs:
+    - ./data/raw/archive.zip
+  extract:
+    cmd: python digits_recognition/stages/dataset/extract.py -d ./data/raw/archive.zip
+      -o ./data/interim
+    deps:
+    - digits_recognition/stages/dataset/extract.py
+    - ./data/raw/archive.zip
+    outs:
+    - ./data/interim
+  split:
+    cmd: python digits_recognition/stages/dataset/split.py -d ./data/interim -o ./data/processed/dataset.pkl
+      -s 42 -r 0.15
+    deps:
+    - digits_recognition/stages/dataset/split.py
+    - ./data/interim
+    outs:
+    - ./data/processed/dataset.pkl

@@ -1,0 +1,56 @@
+schema: '2.0'
+stages:
+  download:
+    cmd: python digits_recognition/stages/dataset/download.py -o ./data/raw/archive.zip
+    deps:
+    - path: digits_recognition/stages/dataset/download.py
+      hash: md5
+      md5: 5a1caa4c972ecee8bef5e9ee17e86208
+      size: 312
+      isexec: true
+    outs:
+    - path: ./data/raw/archive.zip
+      hash: md5
+      md5: 72a645a3fd2da4fd0adc12c5f38956d0
+      size: 23112702
+      isexec: true
+  extract:
+    cmd: python digits_recognition/stages/dataset/extract.py -d ./data/raw/archive.zip
+      -o ./data/interim
+    deps:
+    - path: ./data/raw/archive.zip
+      hash: md5
+      md5: 72a645a3fd2da4fd0adc12c5f38956d0
+      size: 23112702
+      isexec: true
+    - path: digits_recognition/stages/dataset/extract.py
+      hash: md5
+      md5: e5fb3189728d6403988ffa890cd33f2f
+      size: 312
+      isexec: true
+    outs:
+    - path: ./data/interim
+      hash: md5
+      md5: 7e0914f66dbe3c1571a44a806ddc1907.dir
+      size: 109900096
+      nfiles: 8
+  split:
+    cmd: python digits_recognition/stages/dataset/split.py -d ./data/interim -o ./data/processed/dataset.pkl
+      -s 42 -r 0.15
+    deps:
+    - path: ./data/interim
+      hash: md5
+      md5: 7e0914f66dbe3c1571a44a806ddc1907.dir
+      size: 109900096
+      nfiles: 8
+    - path: digits_recognition/stages/dataset/split.py
+      hash: md5
+      md5: 7b87f2ffb6f83227639cd3accc7245c4
+      size: 1614
+      isexec: true
+    outs:
+    - path: ./data/processed/dataset.pkl
+      hash: md5
+      md5: 0937e70cf13fb9378e8b6a59467b4a29
+      size: 54950419
+      isexec: true
