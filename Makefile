@@ -3,7 +3,7 @@
 #################################################################################
 
 PROJECT_NAME = digits_recognition
-PYTHON_VERSION = 3.10
+PYTHON_VERSION = 3.12.7
 PYTHON_INTERPRETER = python
 
 #################################################################################
@@ -38,8 +38,13 @@ lint:
 format:
 	black --config pyproject.toml digits_recognition
 
+.PHONY: create_environment
+create_environment:
+	$(PYTHON_INTERPRETER) -m venv .venv
 
-
+.PHONY: export_requirements
+export_requirements:
+	$(PYTHON_INTERPRETER) -m pip freeze > requirements.txt
 
 
 
