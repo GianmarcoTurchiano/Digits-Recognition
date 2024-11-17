@@ -1,9 +1,15 @@
+"""
+Script for extracting files from the zipped dataset.
+"""
 import argparse
-import zipfile
 import os
+import zipfile
+
 
 def unzip(zip_path, out_path):
-    # Check if the specified path exists, create if it doesn't
+    """
+    Extracts the contents of a zipped archive.
+    """
     if not os.path.exists(out_path):
         os.makedirs(out_path)
         print(f"Created path: {out_path}")
@@ -13,9 +19,10 @@ def unzip(zip_path, out_path):
 
     print(f"Files extracted to: {out_path}")
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    
+
     parser.add_argument('-z', '--zip_path', type=str)
     parser.add_argument('-o', '--out_path', type=str)
     args = parser.parse_args()

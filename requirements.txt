@@ -10,6 +10,7 @@ annotated-types==0.7.0
 antlr4-python3-runtime==4.9.3
 anyio==4.6.2.post1
 appdirs==1.4.4
+astroid==3.3.5
 asttokens==2.4.1
 asyncssh==2.18.0
 atpublic==5.0
@@ -45,7 +46,8 @@ debugpy==1.8.8
 decorator==5.1.1
 Deprecated==1.2.14
 dictdiffer==0.9.0
--e git+ssh://git@github.com/GianmarcoTurchiano/Digits-Recognition.git@4d6d91a89a92c6a7ba6cde74a7f65963bc6f7448#egg=digits_recognition
+-e git+ssh://git@github.com/GianmarcoTurchiano/Digits-Recognition.git@bdd1710fda1f6b6efb4e1ee02827d1f31e439d02#egg=digits_recognition
+dill==0.3.9
 diskcache==5.6.3
 distro==1.9.0
 docker==7.1.0
@@ -163,6 +165,7 @@ pyflakes==3.2.0
 pygit2==1.16.0
 Pygments==2.18.0
 pygtrie==2.5.0
+pylint==3.3.1
 pyparsing==3.2.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1

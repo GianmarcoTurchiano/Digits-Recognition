@@ -1,15 +1,26 @@
-from digits_recognition.modeling.classifier import DigitClassifier
-import torch
-from sklearn.metrics import precision_score, accuracy_score, recall_score, f1_score, classification_report
-from digits_recognition.load_dataset import load_dataset
+"""
+Script for evaluating the trained classifier.
+"""
 import argparse
-from tqdm import tqdm
+
 import mlflow
+import torch
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    f1_score,
+    precision_score,
+    recall_score,
+)
+from tqdm import tqdm
+
+from digits_recognition.load_dataset import load_dataset
 from digits_recognition.mlflow_setup import mlflow_setup
+from digits_recognition.modeling.classifier import DigitClassifier
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    
+
     parser.add_argument('-m', '--model_path', type=str)
     parser.add_argument('-t', '--test_set_path', type=str)
     parser.add_argument('-n', '--normalize', action='store_true')
@@ -19,7 +30,12 @@ if __name__ == '__main__':
 
     mlflow_setup()
 
-    test_loader = load_dataset(args.test_set_path, normalize=args.normalize, shuffle=False, batch_size=args.batch_size)
+    test_loader = load_dataset(
+        args.test_set_path,
+        normalize=args.normalize,
+        shuffle=False,
+        batch_size=args.batch_size
+    )
 
     model = DigitClassifier()
     model.load_state_dict(torch.load(args.model_path, weights_only=True))
@@ -29,12 +45,12 @@ if __name__ == '__main__':
     with torch.no_grad():
         all_preds = []
         all_labels = []
-        
+
         for data, labels in tqdm(test_loader):
             logits = model(data)
-            
+
             _, predicted = torch.max(logits, 1)
-            
+
             all_preds.extend(predicted.cpu().numpy())
             all_labels.extend(labels.cpu().numpy())
 

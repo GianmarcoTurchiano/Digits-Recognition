@@ -30,8 +30,7 @@ clean:
 .PHONY: lint
 lint:
 	flake8 digits_recognition
-	isort --check --diff --profile black digits_recognition
-	black --check --config pyproject.toml digits_recognition
+	pylint digits_recognition
 
 ## Format source code with black
 .PHONY: format

@@ -1,17 +1,22 @@
-import torch
-import torch.nn as nn
+"""
+Script for training the classifier.
+"""
 import argparse
-import torch.optim as optim
+
+import mlflow
+import torch
+from torch import nn
+from torch import optim
 from torch.optim.lr_scheduler import PolynomialLR
 from tqdm import tqdm
+
 from digits_recognition.load_dataset import load_dataset
-import mlflow
-from digits_recognition.modeling.classifier import DigitClassifier
 from digits_recognition.mlflow_setup import mlflow_setup
+from digits_recognition.modeling.classifier import DigitClassifier
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    
+
     parser.add_argument('-t', '--train_set_path', type=str)
     parser.add_argument('-v', '--val_set_path', type=str)
     parser.add_argument('-m', '--model_path', type=str)
@@ -28,8 +33,18 @@ if __name__ == '__main__':
 
     torch.manual_seed(args.random_seed)
 
-    train_loader = load_dataset(args.train_set_path, normalize=args.normalize, shuffle=True, batch_size=args.batch_size)
-    val_loader = load_dataset(args.val_set_path, normalize=args.normalize, shuffle=False, batch_size=args.batch_size)
+    train_loader = load_dataset(
+        args.train_set_path,
+        normalize=args.normalize,
+        shuffle=True,
+        batch_size=args.batch_size
+    )
+    val_loader = load_dataset(
+        args.val_set_path,
+        normalize=args.normalize,
+        shuffle=False,
+        batch_size=args.batch_size
+    )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -38,7 +53,7 @@ if __name__ == '__main__':
     mlflow_setup()
 
     mlflow.start_run(run_name="Training")
-    
+
     mlflow.log_param("epochs", args.epochs)
     mlflow.log_param("learning_rate", args.learning_rate)
     mlflow.log_param("batch_size", args.batch_size)
@@ -50,13 +65,21 @@ if __name__ == '__main__':
 
     # Loss and optimizer
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
-    scheduler = PolynomialLR(optimizer, total_iters=args.epochs, power=args.polynomial_scheduler_power)
+    optimizer = optim.Adam(
+        model.parameters(),
+        lr=args.learning_rate,
+        weight_decay=args.weight_decay
+    )
+    scheduler = PolynomialLR(
+        optimizer,
+        total_iters=args.epochs,
+        power=args.polynomial_scheduler_power
+    )
 
     best_val_loss = float('inf')
     epochs_no_improve = 0
 
-    for epoch in tqdm(range(1, args.epochs+1), desc="Epochs"):
+    for epoch in tqdm(range(1, args.epochs + 1), desc="Epochs"):
         # Training loop
 
         model.train()
@@ -67,7 +90,11 @@ if __name__ == '__main__':
         tqdm.write(f"Learning rate: {last_lr}")
         train_loss = 0
 
-        for images, labels in tqdm(train_loader, desc=f"Epoch [{epoch}/{args.epochs}], Training", leave=False):
+        for images, labels in tqdm(
+            train_loader,
+            desc=f"Epoch [{epoch}/{args.epochs}], Training",
+            leave=False
+        ):
             X = images.to(device)
             y = labels.to(device)
 
@@ -93,7 +120,11 @@ if __name__ == '__main__':
         model.eval()
 
         with torch.no_grad():
-            for images, labels in tqdm(val_loader, desc=f"Epoch [{epoch}/{args.epochs}], Validation", leave=False):
+            for images, labels in tqdm(
+                val_loader,
+                desc=f"Epoch [{epoch}/{args.epochs}], Validation",
+                leave=False
+            ):
                 X = images.to(device)
                 y = labels.to(device)
 
@@ -104,7 +135,7 @@ if __name__ == '__main__':
                 val_loss += loss.item()
 
         avg_val_loss = val_loss / len(val_loader)
-        
+
         mlflow.log_metric("Validation loss", avg_val_loss, step=epoch)
         tqdm.write(f"Epoch {epoch}, Validation Loss: {avg_val_loss}")
 
@@ -115,14 +146,14 @@ if __name__ == '__main__':
             torch.save(model.state_dict(), args.model_path)
             tqdm.write("Best model weights have been saved.")
         else:
-            epochs_no_improve += 1 
+            epochs_no_improve += 1
 
         if epochs_no_improve == args.patience:
             tqdm.write(f"Early stopping triggered after {epoch} epochs.")
             break
 
         scheduler.step()
-    
+
     mlflow.log_artifact(args.model_path)
 
     mlflow.end_run()

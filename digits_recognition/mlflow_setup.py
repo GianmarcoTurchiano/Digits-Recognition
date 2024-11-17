@@ -1,9 +1,17 @@
+"""
+MLFlow Setup module
+"""
 import os
-import mlflow
+
 import dagshub
+import mlflow
 from dotenv import load_dotenv
 
+
 def mlflow_setup():
+    """
+    Prepares all that it is necessary for logging experiments with MLFlow
+    """
     load_dotenv('.env')
 
     repo_owner = os.getenv('DAGSHUB_REPO_OWNER')
