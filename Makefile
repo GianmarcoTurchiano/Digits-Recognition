@@ -47,7 +47,7 @@ export_requirements:
 
 .PHONY: test
 test:
-	$(PYTHON_INTERPRETER) -m pytest digits_recognition
+	$(PYTHON_INTERPRETER) -m pytest digits_recognition/modeling/behavioral_tests/
 
 #################################################################################
 # PROJECT RULES                                                                 #
