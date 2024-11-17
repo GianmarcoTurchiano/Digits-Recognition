@@ -33,17 +33,18 @@ stages:
     - digits_recognition/modeling/classifier.py
     - digits_recognition/modeling/train.py
     - digits_recognition/load_dataset.py
-    - digits_recognition/experiment_name.py
+    - digits_recognition/mlflow_setup.py
     - ./data/processed/val_set.pkl
     - ./data/processed/train_set.pkl
     outs:
     - ./models/digit_classifier.pth
   evaluate:
     cmd: python digits_recognition/modeling/evaluate.py -t ./data/processed/test_set.pkl
-      -m ./models/digit_classifier.pth --random_seed 42 --batch_size 64
+      -m ./models/digit_classifier.pth --batch_size 64
     deps:
     - digits_recognition/modeling/evaluate.py
     - digits_recognition/modeling/classifier.py
     - digits_recognition/load_dataset.py
+    - digits_recognition/mlflow_setup.py
     - ./data/processed/test_set.pkl
     - ./models/digit_classifier.pth

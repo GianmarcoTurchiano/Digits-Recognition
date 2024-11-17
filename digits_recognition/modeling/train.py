@@ -5,12 +5,9 @@ import torch.optim as optim
 from torch.optim.lr_scheduler import PolynomialLR
 from tqdm import tqdm
 from digits_recognition.load_dataset import load_dataset
-import dagshub
 import mlflow
-import os
-from dotenv import load_dotenv, set_key
-from digits_recognition.experiment_name import get_experiment_name
 from digits_recognition.modeling.classifier import DigitClassifier
+from digits_recognition.mlflow_setup import mlflow_setup
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -38,17 +35,7 @@ if __name__ == '__main__':
 
     model = DigitClassifier().to(device)
 
-    set_key('.env', 'CURRENT_EXPERIMENT_NAME', get_experiment_name(model, args))
-
-    load_dotenv('.env')
-
-    repo_owner = os.getenv('DAGSHUB_REPO_OWNER')
-    repo_name = os.getenv('DAGSHUB_REPO_NAME')
-    experiment_name = os.getenv('CURRENT_EXPERIMENT_NAME')
-
-    dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
-
-    mlflow.set_experiment(experiment_name)
+    mlflow_setup()
 
     mlflow.start_run(run_name="Training")
     
@@ -136,4 +123,6 @@ if __name__ == '__main__':
 
         scheduler.step()
     
+    mlflow.log_artifact(args.model_path)
+
     mlflow.end_run()
