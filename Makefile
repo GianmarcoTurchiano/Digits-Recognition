@@ -45,7 +45,9 @@ create_environment:
 export_requirements:
 	$(PYTHON_INTERPRETER) -m pip freeze > requirements.txt
 
-
+.PHONY: test
+test:
+	$(PYTHON_INTERPRETER) -m pytest digits_recognition
 
 #################################################################################
 # PROJECT RULES                                                                 #

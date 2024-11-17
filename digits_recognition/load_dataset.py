@@ -18,9 +18,10 @@ def _load_data(path):
     return data
 
 
-def load_dataset(path, normalize, shuffle, batch_size):
+def load_data_tensors(path, normalize):
     """
-    Returns a loader from the contents of a pickle file containing an 'X' and 'y' key.
+    Returns images and labels columns from the 'X' and 'y' keys
+    of a dictionary obtained from a file.
     """
     data = _load_data(path)
 
@@ -29,6 +30,15 @@ def load_dataset(path, normalize, shuffle, batch_size):
 
     if normalize:
         images = images / 255.0
+
+    return images, labels
+
+
+def load_dataset(path, normalize, shuffle, batch_size):
+    """
+    Returns a loader from the contents of a pickle file containing an 'X' and 'y' key.
+    """
+    images, labels = load_data_tensors(path, normalize)
 
     tensor_data = TensorDataset(images, labels)
     loader = DataLoader(tensor_data, batch_size=batch_size, shuffle=shuffle)

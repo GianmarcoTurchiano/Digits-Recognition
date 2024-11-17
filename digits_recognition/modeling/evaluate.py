@@ -37,8 +37,11 @@ if __name__ == '__main__':
         batch_size=args.batch_size
     )
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     model = DigitClassifier()
     model.load_state_dict(torch.load(args.model_path, weights_only=True))
+    model.to(device)
 
     model.eval()
 
@@ -46,8 +49,10 @@ if __name__ == '__main__':
         all_preds = []
         all_labels = []
 
-        for data, labels in tqdm(test_loader):
-            logits = model(data)
+        for images, labels in tqdm(test_loader):
+            images, labels = images.to(device), labels.to(device)
+
+            logits = model(images)
 
             _, predicted = torch.max(logits, 1)
 
