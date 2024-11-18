@@ -23,7 +23,6 @@ if __name__ == '__main__':
 
     parser.add_argument('-m', '--model_path', type=str)
     parser.add_argument('-t', '--test_set_path', type=str)
-    parser.add_argument('-n', '--normalize', action='store_true')
     parser.add_argument('-b', '--batch_size', type=int)
 
     args = parser.parse_args()
@@ -32,7 +31,6 @@ if __name__ == '__main__':
 
     test_loader = load_dataset(
         args.test_set_path,
-        normalize=args.normalize,
         shuffle=False,
         batch_size=args.batch_size
     )
@@ -73,7 +71,6 @@ if __name__ == '__main__':
 
     with mlflow.start_run(run_name='Evaluation'):
         mlflow.log_param("batch_size", args.batch_size)
-        mlflow.log_param("normalize", args.normalize)
 
         mlflow.log_metric("accuracy", accuracy)
 

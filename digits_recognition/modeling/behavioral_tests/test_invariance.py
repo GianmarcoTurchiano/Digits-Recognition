@@ -1,39 +1,57 @@
 import pytest
 import torch
 from digits_recognition.modeling.classifier import DigitClassifier
-from digits_recognition.load_dataset import load_data_tensors
-
+from digits_recognition.load_dataset import (
+    load_dataset,
+    rotation_transform,
+    gaussian_blur_transform,
+    resize_crop_transform,
+    data_augmentation
+)
 
 MODEL_PATH = r'./models/digit_classifier.pth'
 TEST_SET_PATH = r'./data/processed/test_set.pkl'
-NORMALIZE = False
+BATCH_SIZE = 64
 
 
 @pytest.fixture
-def model():
+def device():
+    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+@pytest.fixture
+def model(device):
     model = DigitClassifier()
     model.load_state_dict(torch.load(MODEL_PATH, weights_only=True))
     model.eval()
+    model.to(device)
 
     return model
 
 
 @pytest.fixture
-def sample_data():
-    images, _ = load_data_tensors(TEST_SET_PATH, NORMALIZE)
+def data_loader():
+    loader = load_dataset(TEST_SET_PATH, shuffle=False, batch_size=BATCH_SIZE)
 
-    return images
-
-
-def add_noise(inputs, noise_level=0.1):
-    noise = torch.randn_like(inputs) * noise_level
-    return torch.clamp(inputs + noise, 0, 1)  # Keep values in [0, 1]
+    return loader
 
 
-def test_noise_invariance(model, sample_data):
-    outputs_original = model(sample_data)
-    noisy_data = add_noise(sample_data, noise_level=0.2)
-    outputs_noisy = model(noisy_data)
-    assert torch.allclose(
-        outputs_original, outputs_noisy, atol=1e-1
-    ), "Model is not invariant to noise!"
+@pytest.mark.parametrize('transformation', [
+    rotation_transform,
+    gaussian_blur_transform,
+    resize_crop_transform,
+    data_augmentation
+])
+def test_invariance(model, device, data_loader, transformation):
+    for images, _ in data_loader:
+        images = images.to(device)
+        transformed_images = transformation(images).to(device)
+
+        model_prediction_original = model(images)
+        predicted_label_original = torch.argmax(model_prediction_original, dim=1).item()
+
+        model_prediction_rotated = model(transformed_images)
+        predicted_label_rotated = torch.argmax(model_prediction_rotated, dim=1).item()
+
+        assert (predicted_label_original == predicted_label_rotated), \
+            f"Prediction differs for original and transformed image ({transformation})"

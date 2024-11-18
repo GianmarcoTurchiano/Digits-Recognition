@@ -15,7 +15,7 @@ from digits_recognition.mlflow_setup import mlflow_setup
 from digits_recognition.modeling.classifier import DigitClassifier
 
 
-def train_step(model, loader, device, optimizer, criterion):
+def training_step(model, loader, device, optimizer, criterion):
     """
     Training step, called once each epoch.
     """
@@ -45,7 +45,7 @@ def train_step(model, loader, device, optimizer, criterion):
 
 def validation_step(model, loader, device, criterion):
     """
-    Training step, called once each epoch.
+    Validation step, called once each epoch.
     """
     model.eval()
 
@@ -78,7 +78,6 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--epochs', type=int)
     parser.add_argument('-l', '--learning_rate', type=float)
     parser.add_argument('-w', '--weight_decay', type=float)
-    parser.add_argument('-n', '--normalize', action='store_true')
     parser.add_argument('-s', '--random_seed', type=int)
     parser.add_argument('-b', '--batch_size', type=int)
     parser.add_argument('-pow', '--polynomial_scheduler_power', type=float)
@@ -89,13 +88,12 @@ if __name__ == '__main__':
 
     train_loader = load_dataset(
         args.train_set_path,
-        normalize=args.normalize,
         shuffle=True,
-        batch_size=args.batch_size
+        batch_size=args.batch_size,
+        augment=True
     )
     val_loader = load_dataset(
         args.val_set_path,
-        normalize=args.normalize,
         shuffle=False,
         batch_size=args.batch_size
     )
@@ -114,7 +112,6 @@ if __name__ == '__main__':
     mlflow.log_param("patience", args.patience)
     mlflow.log_param("weight_decay", args.weight_decay)
     mlflow.log_param("random_seed", args.random_seed)
-    mlflow.log_param("normalize", args.normalize)
     mlflow.log_param("polynomial_scheduler_power", args.polynomial_scheduler_power)
 
     # Loss and optimizer
@@ -139,7 +136,7 @@ if __name__ == '__main__':
         mlflow.log_metric("Learning rate", last_lr, step=epoch)
         tqdm.write(f"Learning rate: {last_lr}")
 
-        avg_train_loss = train_step(
+        avg_train_loss = training_step(
             digit_classifier,
             train_loader,
             device,

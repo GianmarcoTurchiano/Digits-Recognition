@@ -49,6 +49,10 @@ export_requirements:
 test:
 	$(PYTHON_INTERPRETER) -m pytest digits_recognition/modeling/behavioral_tests/
 
+.PHONY: rollback
+rollback:
+	git reset --soft HEAD~1
+
 #################################################################################
 # PROJECT RULES                                                                 #
 #################################################################################

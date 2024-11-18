@@ -5,7 +5,11 @@ Code for preparing the dataset for usage with PyTorch.
 import pickle
 
 import torch
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader, Dataset
+from torchvision import transforms
+from digits_recognition.modeling.classifier import INPUT_HEIGHT, INPUT_WIDTH
+from PIL import Image
+import numpy as np
 
 
 def _load_data(path):
@@ -18,29 +22,58 @@ def _load_data(path):
     return data
 
 
-def load_data_tensors(path, normalize):
+class DigitsDataset(Dataset):
     """
-    Returns images and labels columns from the 'X' and 'y' keys
-    of a dictionary obtained from a file.
+    Returns image-label pairs and applies transformations to images.
     """
-    data = _load_data(path)
+    def __init__(self, images, labels, transform=transforms.ToTensor()):
+        self.images = images
+        self.labels = labels
+        self.transform = transform
 
-    images = torch.tensor(data['X'], dtype=torch.float32)
-    labels = torch.tensor(data['y'], dtype=torch.long)
+    def __len__(self):
+        return len(self.images)
 
-    if normalize:
-        images = images / 255.0
+    def __getitem__(self, idx):
+        image = self.images[idx]
+        label = self.labels[idx]
 
-    return images, labels
+        image = image.astype(np.uint8)
+        image = Image.fromarray(image)
+
+        image = self.transform(image)
+
+        label = torch.tensor(label)
+
+        return image, label
 
 
-def load_dataset(path, normalize, shuffle, batch_size):
+rotation_transform = transforms.RandomRotation(degrees=90)
+gaussian_blur_transform = transforms.GaussianBlur(kernel_size=(5, 5), sigma=(0.1, 2.0))
+resize_crop_transform = transforms.RandomResizedCrop(
+    size=(INPUT_HEIGHT, INPUT_WIDTH),
+    scale=(0.8, 1.0)
+)
+data_augmentation = transforms.Compose([
+    rotation_transform,
+    gaussian_blur_transform,
+    resize_crop_transform,
+    transforms.ToTensor()
+])
+
+
+def load_dataset(path, shuffle, batch_size, augment=False):
     """
     Returns a loader from the contents of a pickle file containing an 'X' and 'y' key.
     """
-    images, labels = load_data_tensors(path, normalize)
+    data = _load_data(path)
 
-    tensor_data = TensorDataset(images, labels)
+    if augment:
+        transform = data_augmentation
+    else:
+        transform = transforms.ToTensor()
+
+    tensor_data = DigitsDataset(data['X'], data['y'], transform=transform)
     loader = DataLoader(tensor_data, batch_size=batch_size, shuffle=shuffle)
 
     return loader
