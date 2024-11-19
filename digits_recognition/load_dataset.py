@@ -7,9 +7,11 @@ import pickle
 import torch
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
-from digits_recognition.modeling.classifier import INPUT_HEIGHT, INPUT_WIDTH
+from torchvision.transforms import functional as F
 from PIL import Image
 import numpy as np
+
+from digits_recognition.modeling.classifier import INPUT_HEIGHT, INPUT_WIDTH
 
 
 def _load_data(path):
@@ -26,7 +28,7 @@ class DigitsDataset(Dataset):
     """
     Returns image-label pairs and applies transformations to images.
     """
-    def __init__(self, images, labels, transform=transforms.ToTensor()):
+    def __init__(self, images, labels, transform=None):
         self.images = images
         self.labels = labels
         self.transform = transform
@@ -39,10 +41,12 @@ class DigitsDataset(Dataset):
         label = self.labels[idx]
 
         image = image.astype(np.uint8)
-        image = Image.fromarray(image)
+        image = Image.fromarray(image, mode='L')
 
-        image = self.transform(image)
+        if self.transform:
+            image = self.transform(image)
 
+        image = F.to_tensor(image)
         label = torch.tensor(label)
 
         return image, label
@@ -58,7 +62,6 @@ data_augmentation = transforms.Compose([
     rotation_transform,
     gaussian_blur_transform,
     resize_crop_transform,
-    transforms.ToTensor()
 ])
 
 
@@ -71,9 +74,9 @@ def load_dataset(path, shuffle, batch_size, augment=False):
     if augment:
         transform = data_augmentation
     else:
-        transform = transforms.ToTensor()
+        transform = None
 
-    tensor_data = DigitsDataset(data['X'], data['y'], transform=transform)
-    loader = DataLoader(tensor_data, batch_size=batch_size, shuffle=shuffle)
+    dataset = DigitsDataset(data['X'], data['y'], transform=transform)
+    loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
 
     return loader

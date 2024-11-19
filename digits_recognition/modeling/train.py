@@ -68,6 +68,49 @@ def validation_step(model, loader, device, criterion):
     return val_loss / len(loader)
 
 
+def setup_components(
+    train_set_path,
+    batch_size,
+    learning_rate,
+    weight_decay,
+    epochs,
+    polynomial_scheduler_power,
+    shuffle_data=True,
+    augment_data=True
+):
+    """
+    Initializes and returns components that are required for training.
+    """
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    model = DigitClassifier()
+    model.eval()
+    model.to(device)
+
+    loader = load_dataset(
+        train_set_path,
+        shuffle=shuffle_data,
+        batch_size=batch_size,
+        augment=augment_data
+    )
+
+    criterion = nn.CrossEntropyLoss()
+
+    optimizer = optim.Adam(
+        model.parameters(),
+        lr=learning_rate,
+        weight_decay=weight_decay
+    )
+
+    scheduler = PolynomialLR(
+        optimizer,
+        total_iters=epochs,
+        power=polynomial_scheduler_power
+    )
+
+    return model, loader, device, optimizer, criterion, scheduler
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
@@ -86,72 +129,58 @@ if __name__ == '__main__':
 
     torch.manual_seed(args.random_seed)
 
-    train_loader = load_dataset(
-        args.train_set_path,
-        shuffle=True,
-        batch_size=args.batch_size,
-        augment=True
-    )
     val_loader = load_dataset(
         args.val_set_path,
         shuffle=False,
         batch_size=args.batch_size
     )
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    digit_classifier = DigitClassifier().to(device)
-
     mlflow_setup()
 
     mlflow.start_run(run_name="Training")
 
-    mlflow.log_param("epochs", args.epochs)
-    mlflow.log_param("learning_rate", args.learning_rate)
-    mlflow.log_param("batch_size", args.batch_size)
-    mlflow.log_param("patience", args.patience)
-    mlflow.log_param("weight_decay", args.weight_decay)
-    mlflow.log_param("random_seed", args.random_seed)
-    mlflow.log_param("polynomial_scheduler_power", args.polynomial_scheduler_power)
+    mlflow.log_param("Epochs", args.epochs)
+    mlflow.log_param("Initial learning rate", args.learning_rate)
+    mlflow.log_param("Batch size", args.batch_size)
+    mlflow.log_param("Patience", args.patience)
+    mlflow.log_param("Weight decay", args.weight_decay)
+    mlflow.log_param("Random seed", args.random_seed)
+    mlflow.log_param("Polynomial scheduler power", args.polynomial_scheduler_power)
 
-    # Loss and optimizer
-    cross_entropy_criterion = nn.CrossEntropyLoss()
-    adam_optimizer = optim.Adam(
-        digit_classifier.parameters(),
-        lr=args.learning_rate,
-        weight_decay=args.weight_decay
-    )
-    polynomial_scheduler = PolynomialLR(
-        adam_optimizer,
-        total_iters=args.epochs,
-        power=args.polynomial_scheduler_power
+    model, train_loader, device, optimizer, criterion, scheduler = setup_components(
+        args.train_set_path,
+        args.batch_size,
+        args.learning_rate,
+        args.weight_decay,
+        args.epochs,
+        args.polynomial_scheduler_power
     )
 
     best_val_loss = float('inf')
     epochs_no_improve = 0
 
     for epoch in tqdm(range(1, args.epochs + 1), desc="Epochs"):
-        [last_lr] = polynomial_scheduler.get_last_lr()
+        [last_lr] = scheduler.get_last_lr()
 
         mlflow.log_metric("Learning rate", last_lr, step=epoch)
         tqdm.write(f"Learning rate: {last_lr}")
 
         avg_train_loss = training_step(
-            digit_classifier,
+            model,
             train_loader,
             device,
-            adam_optimizer,
-            cross_entropy_criterion
+            optimizer,
+            criterion
         )
 
         mlflow.log_metric("Train loss", avg_train_loss, step=epoch)
         tqdm.write(f"Epoch {epoch}, Train Loss: {avg_train_loss}")
 
         avg_val_loss = validation_step(
-            digit_classifier,
+            model,
             val_loader,
             device,
-            cross_entropy_criterion
+            criterion
         )
 
         mlflow.log_metric("Validation loss", avg_val_loss, step=epoch)
@@ -161,7 +190,7 @@ if __name__ == '__main__':
         if avg_val_loss < best_val_loss:
             best_val_loss = avg_val_loss
             epochs_no_improve = 0
-            torch.save(digit_classifier.state_dict(), args.model_path)
+            torch.save(model.state_dict(), args.model_path)
             tqdm.write("Best model weights have been saved.")
         else:
             epochs_no_improve += 1
@@ -170,7 +199,7 @@ if __name__ == '__main__':
             tqdm.write(f"Early stopping triggered after {epoch} epochs.")
             break
 
-        polynomial_scheduler.step()
+        scheduler.step()
 
     mlflow.log_artifact(args.model_path)
     mlflow.end_run()

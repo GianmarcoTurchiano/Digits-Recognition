@@ -45,9 +45,13 @@ create_environment:
 export_requirements:
 	$(PYTHON_INTERPRETER) -m pip freeze > requirements.txt
 
+.PHONY: behavioural_test
+behavioural_test:
+	$(PYTHON_INTERPRETER) -m pytest digits_recognition/modeling/behavioral_tests/
+
 .PHONY: test
 test:
-	$(PYTHON_INTERPRETER) -m pytest digits_recognition/modeling/behavioral_tests/
+	$(PYTHON_INTERPRETER) -m pytest digits_recognition/modeling/tests/
 
 .PHONY: rollback
 rollback:
