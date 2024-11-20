@@ -65,7 +65,7 @@ data_augmentation = transforms.Compose([
 ])
 
 
-def load_dataset(path, shuffle, batch_size, augment=False):
+def load_dataset(path, shuffle, batch_size, persistent_workers=True, device=None, augment=False):
     """
     Returns a loader from the contents of a pickle file containing an 'X' and 'y' key.
     """
@@ -77,6 +77,22 @@ def load_dataset(path, shuffle, batch_size, augment=False):
         transform = None
 
     dataset = DigitsDataset(data['X'], data['y'], transform=transform)
-    loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
+
+    pin_memory = device.type == 'cuda'
+
+    if pin_memory:
+        pin_memory_device = device.type
+    else:
+        pin_memory_device = ''
+
+    loader = DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=shuffle,
+        num_workers=8,
+        persistent_workers=persistent_workers,
+        pin_memory=pin_memory,
+        pin_memory_device=pin_memory_device
+    )
 
     return loader

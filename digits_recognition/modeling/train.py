@@ -68,15 +68,14 @@ def validation_step(model, loader, device, criterion):
     return val_loss / len(loader)
 
 
-def setup_components(
+def setup_training_components(
     train_set_path,
     batch_size,
     learning_rate,
     weight_decay,
     epochs,
     polynomial_scheduler_power,
-    shuffle_data=True,
-    augment_data=True
+    persistent_workers=True
 ):
     """
     Initializes and returns components that are required for training.
@@ -89,9 +88,11 @@ def setup_components(
 
     loader = load_dataset(
         train_set_path,
-        shuffle=shuffle_data,
+        shuffle=True,
         batch_size=batch_size,
-        augment=augment_data
+        augment=True,
+        device=device,
+        persistent_workers=persistent_workers
     )
 
     criterion = nn.CrossEntropyLoss()
@@ -109,6 +110,39 @@ def setup_components(
     )
 
     return model, loader, device, optimizer, criterion, scheduler
+
+
+def setup_components(
+    train_set_path,
+    val_set_path,
+    batch_size,
+    learning_rate,
+    weight_decay,
+    epochs,
+    polynomial_scheduler_power
+):
+    """
+    Initializes and returns components that are required for training and for validation.
+    """
+    model, train_loader, device, optimizer, criterion, scheduler = setup_training_components(
+        train_set_path,
+        batch_size,
+        learning_rate,
+        weight_decay,
+        epochs,
+        polynomial_scheduler_power,
+        persistent_workers=False
+    )
+
+    val_loader = load_dataset(
+        val_set_path,
+        shuffle=False,
+        batch_size=batch_size,
+        device=device,
+        persistent_workers=False
+    )
+
+    return model, train_loader, val_loader, device, optimizer, criterion, scheduler
 
 
 if __name__ == '__main__':
@@ -129,12 +163,6 @@ if __name__ == '__main__':
 
     torch.manual_seed(args.random_seed)
 
-    val_loader = load_dataset(
-        args.val_set_path,
-        shuffle=False,
-        batch_size=args.batch_size
-    )
-
     mlflow_setup()
 
     mlflow.start_run(run_name="Training")
@@ -147,8 +175,9 @@ if __name__ == '__main__':
     mlflow.log_param("Random seed", args.random_seed)
     mlflow.log_param("Polynomial scheduler power", args.polynomial_scheduler_power)
 
-    model, train_loader, device, optimizer, criterion, scheduler = setup_components(
+    model, train_loader, val_loader, device, optimizer, criterion, scheduler = setup_components(
         args.train_set_path,
+        args.val_set_path,
         args.batch_size,
         args.learning_rate,
         args.weight_decay,

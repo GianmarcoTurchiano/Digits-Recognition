@@ -12,7 +12,7 @@ BATCH_SIZE = 64
 
 
 @pytest.fixture
-def validation_components():
+def components():
     return setup_components(
         TEST_SET_PATH,
         BATCH_SIZE,
@@ -20,8 +20,8 @@ def validation_components():
     )
 
 
-def test_evaluation_step(validation_components):
-    model, device, loader = validation_components
+def test_evaluation_step(components):
+    model, device, loader = components
 
     try:
         all_labels, all_preds = inference_step(model, device, loader)

@@ -1,14 +1,14 @@
 import pytest
 import torch
-from digits_recognition.modeling.classifier import DigitClassifier
+from torchvision.transforms import functional as F
+
 from digits_recognition.load_dataset import (
-    load_dataset,
     rotation_transform,
     gaussian_blur_transform,
     resize_crop_transform,
     data_augmentation
 )
-from torchvision.transforms import functional as F
+from digits_recognition.modeling.evaluate import setup_components
 
 
 MODEL_PATH = r'./models/digit_classifier.pth'
@@ -17,25 +17,12 @@ BATCH_SIZE = 64
 
 
 @pytest.fixture
-def device():
-    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
-@pytest.fixture
-def model(device):
-    model = DigitClassifier()
-    model.load_state_dict(torch.load(MODEL_PATH, weights_only=True))
-    model.eval()
-    model.to(device)
-
-    return model
-
-
-@pytest.fixture
-def data_loader():
-    loader = load_dataset(TEST_SET_PATH, shuffle=False, batch_size=BATCH_SIZE)
-
-    return loader
+def components():
+    return setup_components(
+        TEST_SET_PATH,
+        BATCH_SIZE,
+        MODEL_PATH
+    )
 
 
 @pytest.mark.parametrize('transformation', [
@@ -44,8 +31,10 @@ def data_loader():
     resize_crop_transform,
     data_augmentation
 ])
-def test_invariance(model, device, data_loader, transformation):
-    for images, _ in data_loader:
+def test_invariance(components, transformation):
+    model, device, loader = components
+
+    for images, _ in loader:
         pil_images = [F.to_pil_image(image, mode='L') for image in images]
 
         # Apply the transformation to each image

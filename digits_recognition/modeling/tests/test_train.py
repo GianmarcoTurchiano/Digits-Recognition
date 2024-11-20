@@ -2,6 +2,7 @@ import pytest
 from digits_recognition.modeling.train import (
     training_step,
     validation_step,
+    setup_training_components,
     setup_components
 )
 
@@ -17,7 +18,7 @@ POLYNOMIAL_SCHEDULER_POWER = 1
 
 @pytest.fixture
 def training_components():
-    return setup_components(
+    return setup_training_components(
         TRAIN_SET_PATH,
         BATCH_SIZE,
         LEARNING_RATE,
@@ -30,14 +31,13 @@ def training_components():
 @pytest.fixture
 def validation_components():
     return setup_components(
+        TRAIN_SET_PATH,
         VAL_SET_PATH,
         BATCH_SIZE,
         LEARNING_RATE,
         WEIGHT_DECAY,
         EPOCHS,
-        POLYNOMIAL_SCHEDULER_POWER,
-        shuffle_data=False,
-        augment_data=False
+        POLYNOMIAL_SCHEDULER_POWER
     )
 
 
@@ -51,7 +51,7 @@ def test_training_step(training_components):
 
 
 def test_validation_step(validation_components):
-    model, loader, device, _, criterion, _ = validation_components
+    model, _, loader, device, _, criterion, _ = validation_components
 
     try:
         validation_step(model, loader, device, criterion)

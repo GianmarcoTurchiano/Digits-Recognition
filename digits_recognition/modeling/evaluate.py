@@ -75,13 +75,14 @@ def setup_components(test_set_path, batch_size, model_path):
     """
     mlflow_setup()
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     loader = load_dataset(
         test_set_path,
         shuffle=False,
-        batch_size=batch_size
+        batch_size=batch_size,
+        device=device
     )
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = DigitClassifier()
     model.load_state_dict(torch.load(model_path, weights_only=True))
