@@ -27,7 +27,7 @@ stages:
   train:
     cmd: python digits_recognition/modeling/train.py -t ./data/processed/train_set.pkl
       -v ./data/processed/val_set.pkl -m ./models/digit_classifier.pth 
-      --patience 10 --epochs 100 --learning_rate 0.0005 --weight_decay 1e-2 --random_seed 42
+      --patience 10 --epochs 100 --learning_rate 0.005 --weight_decay 1e-2 --random_seed 42
       --batch_size 64 --polynomial_scheduler_power 2.0
     deps:
     - digits_recognition/modeling/classifier.py

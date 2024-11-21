@@ -20,7 +20,7 @@ class DigitClassifier(nn.Module):
 
         self.conv1 = nn.Conv2d(
             in_channels=1,
-            out_channels=4,
+            out_channels=6,
             kernel_size=5,
             stride=1
         )
@@ -31,7 +31,7 @@ class DigitClassifier(nn.Module):
         )
 
         self.conv2 = nn.Conv2d(
-            in_channels=4,
+            in_channels=6,
             out_channels=16,
             kernel_size=5,
             stride=1
@@ -51,6 +51,11 @@ class DigitClassifier(nn.Module):
 
         self.fc2 = nn.Linear(
             in_features=120,
+            out_features=84
+        )
+
+        self.fc3 = nn.Linear(
+            in_features=84,
             out_features=CLASS_AMOUNT
         )
 
@@ -65,6 +70,7 @@ class DigitClassifier(nn.Module):
         x = self.pool2(x)
         x = self.flatten(x)
         x = torch.relu(self.fc1(x))
-        x = self.fc2(x)
+        x = torch.relu(self.fc2(x))
+        x = self.fc3(x)
 
         return x
