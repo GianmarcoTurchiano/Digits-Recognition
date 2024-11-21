@@ -75,7 +75,6 @@ def setup_training_components(
     weight_decay,
     epochs,
     polynomial_scheduler_power,
-    persistent_workers=True
 ):
     """
     Initializes and returns components that are required for training.
@@ -92,7 +91,8 @@ def setup_training_components(
         batch_size=batch_size,
         augment=True,
         device=device,
-        persistent_workers=persistent_workers
+        num_workers=8,
+        persistent_workers=True
     )
 
     criterion = nn.CrossEntropyLoss()
@@ -131,15 +131,12 @@ def setup_components(
         weight_decay,
         epochs,
         polynomial_scheduler_power,
-        persistent_workers=False
     )
 
     val_loader = load_dataset(
         val_set_path,
-        shuffle=False,
         batch_size=batch_size,
         device=device,
-        persistent_workers=False
     )
 
     return model, train_loader, val_loader, device, optimizer, criterion, scheduler

@@ -16,17 +16,46 @@ class DigitClassifier(nn.Module):
     """
     def __init__(self):
         super().__init__()
+        self.conv1 = nn.Conv2d(
+            in_channels=1,
+            out_channels=4,
+            kernel_size=5,
+            stride=1
+        )
+
+        self.pool1 = nn.MaxPool2d(
+            kernel_size=2,
+            stride=2
+        )
+
+        self.conv2 = nn.Conv2d(
+            in_channels=4,
+            out_channels=12,
+            kernel_size=5,
+            stride=1
+        )
+
+        self.pool2 = nn.MaxPool2d(
+            kernel_size=2,
+            stride=2
+        )
+
         self.flatten = nn.Flatten()
-        self.fc1 = nn.Linear(INPUT_HEIGHT * INPUT_HEIGHT, 128)
-        self.fc2 = nn.Linear(128, 128)
-        self.fc3 = nn.Linear(128, CLASS_AMOUNT)
+
+        self.fc = nn.Linear(
+            in_features=192,
+            out_features=CLASS_AMOUNT
+        )
 
     def forward(self, x):
         """
         Feed-Forward procedure.
         """
+        x = torch.relu(self.conv1(x))
+        x = self.pool1(x)
+        x = torch.relu(self.conv2(x))
+        x = self.pool2(x)
         x = self.flatten(x)
-        x = torch.relu(self.fc1(x))
-        x = torch.relu(self.fc2(x))
-        x = self.fc3(x)
+        x = self.fc(x)
+
         return x

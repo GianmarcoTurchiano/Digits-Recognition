@@ -65,7 +65,15 @@ data_augmentation = transforms.Compose([
 ])
 
 
-def load_dataset(path, shuffle, batch_size, persistent_workers=True, device=None, augment=False):
+def load_dataset(
+    path,
+    batch_size,
+    num_workers=0,
+    persistent_workers=False,
+    device=None,
+    augment=False,
+    shuffle=False
+):
     """
     Returns a loader from the contents of a pickle file containing an 'X' and 'y' key.
     """
@@ -85,14 +93,20 @@ def load_dataset(path, shuffle, batch_size, persistent_workers=True, device=None
     else:
         pin_memory_device = ''
 
+    if num_workers > 0:
+        prefetch_factor = 8
+    else:
+        prefetch_factor = None
+
     loader = DataLoader(
         dataset,
         batch_size=batch_size,
         shuffle=shuffle,
-        num_workers=8,
+        num_workers=num_workers,
         persistent_workers=persistent_workers,
         pin_memory=pin_memory,
-        pin_memory_device=pin_memory_device
+        pin_memory_device=pin_memory_device,
+        prefetch_factor=prefetch_factor
     )
 
     return loader

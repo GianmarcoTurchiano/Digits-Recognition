@@ -79,13 +79,15 @@ def setup_components(test_set_path, batch_size, model_path):
 
     loader = load_dataset(
         test_set_path,
-        shuffle=False,
         batch_size=batch_size,
         device=device
     )
 
     model = DigitClassifier()
-    model.load_state_dict(torch.load(model_path, weights_only=True))
+
+    if model_path:
+        model.load_state_dict(torch.load(model_path, weights_only=True))
+
     model.to(device)
 
     return model, device, loader

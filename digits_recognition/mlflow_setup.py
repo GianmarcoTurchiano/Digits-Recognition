@@ -12,7 +12,7 @@ def mlflow_setup():
     """
     Prepares all that it is necessary for logging experiments with MLFlow
     """
-    load_dotenv('.env')
+    load_dotenv('.env', override=True)
 
     repo_owner = os.getenv('DAGSHUB_REPO_OWNER')
     repo_name = os.getenv('DAGSHUB_REPO_NAME')

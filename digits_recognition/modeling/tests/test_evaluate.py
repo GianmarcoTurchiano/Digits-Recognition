@@ -7,7 +7,6 @@ from digits_recognition.modeling.evaluate import (
 
 
 TEST_SET_PATH = r'./data/processed/train_set.pkl'
-MODEL_PATH = r'./models/digit_classifier.pth'
 BATCH_SIZE = 64
 
 
@@ -16,7 +15,7 @@ def components():
     return setup_components(
         TEST_SET_PATH,
         BATCH_SIZE,
-        MODEL_PATH
+        None
     )
 
 
