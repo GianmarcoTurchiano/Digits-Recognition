@@ -16,6 +16,8 @@ class DigitClassifier(nn.Module):
     """
     def __init__(self):
         super().__init__()
+        self.padding = nn.ZeroPad2d((2, 2, 2, 2))
+
         self.conv1 = nn.Conv2d(
             in_channels=1,
             out_channels=4,
@@ -30,7 +32,7 @@ class DigitClassifier(nn.Module):
 
         self.conv2 = nn.Conv2d(
             in_channels=4,
-            out_channels=12,
+            out_channels=16,
             kernel_size=5,
             stride=1
         )
@@ -42,8 +44,13 @@ class DigitClassifier(nn.Module):
 
         self.flatten = nn.Flatten()
 
-        self.fc = nn.Linear(
-            in_features=192,
+        self.fc1 = nn.Linear(
+            in_features=400,
+            out_features=120
+        )
+
+        self.fc2 = nn.Linear(
+            in_features=120,
             out_features=CLASS_AMOUNT
         )
 
@@ -51,11 +58,13 @@ class DigitClassifier(nn.Module):
         """
         Feed-Forward procedure.
         """
+        x = self.padding(x)
         x = torch.relu(self.conv1(x))
         x = self.pool1(x)
         x = torch.relu(self.conv2(x))
         x = self.pool2(x)
         x = self.flatten(x)
-        x = self.fc(x)
+        x = torch.relu(self.fc1(x))
+        x = self.fc2(x)
 
         return x

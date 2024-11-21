@@ -68,8 +68,8 @@ stages:
   train:
     cmd: python digits_recognition/modeling/train.py -t ./data/processed/train_set.pkl
       -v ./data/processed/val_set.pkl -m ./models/digit_classifier.pth --patience
-      10 --epochs 100 --learning_rate 0.005 --weight_decay 1e-2 --random_seed 42 --batch_size
-      64 --polynomial_scheduler_power 3.5
+      10 --epochs 100 --learning_rate 0.001 --weight_decay 1e-2 --random_seed 42 --batch_size
+      64 --polynomial_scheduler_power 2.0
     deps:
     - path: ./data/processed/train_set.pkl
       hash: md5
@@ -93,8 +93,8 @@ stages:
       isexec: true
     - path: digits_recognition/modeling/classifier.py
       hash: md5
-      md5: 0424759a31e6cd2d119322c25f936179
-      size: 1198
+      md5: 603365c471f426c61f7ee37116fe573b
+      size: 1414
       isexec: true
     - path: digits_recognition/modeling/train.py
       hash: md5
@@ -104,8 +104,8 @@ stages:
     outs:
     - path: ./models/digit_classifier.pth
       hash: md5
-      md5: de0d50ddae98e0c8612799bfcfc05630
-      size: 15714
+      md5: 2cce4411ff6d1593c7627e0564b35ac5
+      size: 207532
       isexec: true
   evaluate:
     cmd: python digits_recognition/modeling/evaluate.py -t ./data/processed/test_set.pkl
@@ -118,8 +118,8 @@ stages:
       isexec: true
     - path: ./models/digit_classifier.pth
       hash: md5
-      md5: de0d50ddae98e0c8612799bfcfc05630
-      size: 15714
+      md5: 2cce4411ff6d1593c7627e0564b35ac5
+      size: 207532
       isexec: true
     - path: digits_recognition/load_dataset.py
       hash: md5
@@ -133,8 +133,8 @@ stages:
       isexec: true
     - path: digits_recognition/modeling/classifier.py
       hash: md5
-      md5: 0424759a31e6cd2d119322c25f936179
-      size: 1198
+      md5: 603365c471f426c61f7ee37116fe573b
+      size: 1414
       isexec: true
     - path: digits_recognition/modeling/evaluate.py
       hash: md5
