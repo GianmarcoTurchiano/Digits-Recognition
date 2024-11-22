@@ -34,6 +34,9 @@ def components():
 def test_invariance(components, transformation):
     model, device, loader = components
 
+    total_cases = 0
+    invariant_cases = 0
+
     for images, _ in loader:
         pil_images = [F.to_pil_image(image, mode='L') for image in images]
 
@@ -51,5 +54,15 @@ def test_invariance(components, transformation):
         model_prediction_transformed = model(transformed_images)
         predicted_label_transformed = torch.argmax(model_prediction_transformed, dim=1)
 
-        assert (torch.equal(predicted_label_original, predicted_label_transformed)), \
-            f"Prediction differs for original and transformed image ({transformation})"
+        # assert (torch.equal(predicted_label_original, predicted_label_transformed)), \
+        #     f"Prediction differs for original and transformed image ({transformation})"
+
+        total_cases += predicted_label_original.size(0)
+        invariant_cases += torch.sum(predicted_label_original == predicted_label_transformed).item()
+
+    threshold = 100
+
+    invariance_percentage = (invariant_cases / total_cases) * 100
+
+    assert invariance_percentage >= threshold, \
+        f"Invariance below threshold ({threshold}%): {invariance_percentage:.2f}%"

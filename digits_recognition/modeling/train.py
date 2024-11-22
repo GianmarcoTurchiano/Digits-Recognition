@@ -2,6 +2,7 @@
 Script for training the classifier.
 """
 import argparse
+import os
 
 import mlflow
 import torch
@@ -9,6 +10,7 @@ from torch import nn
 from torch import optim
 from torch.optim.lr_scheduler import PolynomialLR
 from tqdm import tqdm
+from dotenv import set_key
 
 from digits_recognition.load_dataset import load_dataset
 from digits_recognition.mlflow_setup import mlflow_setup
@@ -75,6 +77,7 @@ def setup_training_components(
     weight_decay,
     epochs,
     polynomial_scheduler_power,
+    data_augmentation=True
 ):
     """
     Initializes and returns components that are required for training.
@@ -89,7 +92,7 @@ def setup_training_components(
         train_set_path,
         shuffle=True,
         batch_size=batch_size,
-        augment=True,
+        augment=data_augmentation,
         device=device,
         num_workers=8,
         persistent_workers=True
@@ -119,7 +122,8 @@ def setup_components(
     learning_rate,
     weight_decay,
     epochs,
-    polynomial_scheduler_power
+    polynomial_scheduler_power,
+    train_data_augmentation=False
 ):
     """
     Initializes and returns components that are required for training and for validation.
@@ -131,6 +135,7 @@ def setup_components(
         weight_decay,
         epochs,
         polynomial_scheduler_power,
+        train_data_augmentation
     )
 
     val_loader = load_dataset(
@@ -155,14 +160,17 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--random_seed', type=int)
     parser.add_argument('-b', '--batch_size', type=int)
     parser.add_argument('-pow', '--polynomial_scheduler_power', type=float)
+    parser.add_argument('-a', '--train_data_augmentation', action='store_true')
 
     args = parser.parse_args()
 
     torch.manual_seed(args.random_seed)
 
     mlflow_setup()
+    os.environ.pop('MLFLOW_RUN_ID', None)
 
-    mlflow.start_run(run_name="Training")
+    run = mlflow.start_run()
+    set_key('.env', 'MLFLOW_RUN_ID', run.info.run_id)
 
     mlflow.log_param("Epochs", args.epochs)
     mlflow.log_param("Initial learning rate", args.learning_rate)
@@ -171,6 +179,7 @@ if __name__ == '__main__':
     mlflow.log_param("Weight decay", args.weight_decay)
     mlflow.log_param("Random seed", args.random_seed)
     mlflow.log_param("Polynomial scheduler power", args.polynomial_scheduler_power)
+    mlflow.log_param("Train data augmentation", args.train_data_augmentation)
 
     model, train_loader, val_loader, device, optimizer, criterion, scheduler = setup_components(
         args.train_set_path,
@@ -179,7 +188,8 @@ if __name__ == '__main__':
         args.learning_rate,
         args.weight_decay,
         args.epochs,
-        args.polynomial_scheduler_power
+        args.polynomial_scheduler_power,
+        args.train_data_augmentation
     )
 
     best_val_loss = float('inf')
@@ -199,7 +209,7 @@ if __name__ == '__main__':
             criterion
         )
 
-        mlflow.log_metric("Train loss", avg_train_loss, step=epoch)
+        mlflow.log_metric("Training loss", avg_train_loss, step=epoch)
         tqdm.write(f"Epoch {epoch}, Train Loss: {avg_train_loss}")
 
         avg_val_loss = validation_step(
@@ -217,6 +227,8 @@ if __name__ == '__main__':
             best_val_loss = avg_val_loss
             epochs_no_improve = 0
             torch.save(model.state_dict(), args.model_path)
+            mlflow.log_metric("Output validation loss", avg_val_loss, step=epoch)
+            mlflow.log_metric("Output training loss", avg_train_loss, step=epoch)
             tqdm.write("Best model weights have been saved.")
         else:
             epochs_no_improve += 1

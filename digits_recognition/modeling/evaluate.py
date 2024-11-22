@@ -108,7 +108,7 @@ if __name__ == '__main__':
         args.model_path
     )
 
-    with mlflow.start_run(run_name='Evaluation'):
+    with mlflow.start_run():
         all_labels, all_preds = inference_step(model, device, test_loader)
 
         (

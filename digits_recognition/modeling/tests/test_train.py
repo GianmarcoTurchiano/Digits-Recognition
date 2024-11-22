@@ -24,7 +24,7 @@ def training_components():
         LEARNING_RATE,
         WEIGHT_DECAY,
         EPOCHS,
-        POLYNOMIAL_SCHEDULER_POWER
+        POLYNOMIAL_SCHEDULER_POWER,
     )
 
 
