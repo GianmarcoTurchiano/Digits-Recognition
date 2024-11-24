@@ -24,14 +24,13 @@ def annotate_image_with_predictions(model, device, image):
     """
     Queries the model for labels in an image and then annotates them in the image itself.
     """
-    coords, predictions = compute_predictions(model, device, image)
+    res = compute_predictions(model, device, image)
     annotated_image = image.copy()
 
-    for idx, (x, y) in enumerate(coords):
-        label = f"{predictions[idx]}"
+    for ((x, y), label) in res:
         cv2.putText(
             annotated_image,
-            label, (x, y - 10),
+            str(label), (x, y - 10),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.5,
             (255, 0, 0),

@@ -11,7 +11,8 @@ from fastapi.staticfiles import StaticFiles
 import cv2
 import numpy as np
 
-from digits_recognition.evaluation_inference import load_model
+
+from digits_recognition.mlflow_setup import mlflow_model_setup
 from digits_recognition.api.inference import (
     compute_predictions,
     compute_probabilities,
@@ -19,12 +20,12 @@ from digits_recognition.api.inference import (
 )
 
 
-model, device = load_model('./models/digit_classifier.pth')
+model, device = mlflow_model_setup()
+
 model.eval()
 torch.no_grad()
 
 app = FastAPI()
-
 app.mount("/static", StaticFiles(directory="./digits_recognition/api/static"), name="static")
 
 
@@ -33,7 +34,7 @@ async def root_redirect():
     """
     Returns the main web page to the user.
     """
-    return RedirectResponse(url="/static/upload.html")
+    return RedirectResponse(url="/static/form.html")
 
 
 async def _decode_image(file):

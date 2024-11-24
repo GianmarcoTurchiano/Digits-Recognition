@@ -13,7 +13,7 @@ from tqdm import tqdm
 from dotenv import set_key
 
 from digits_recognition.load_dataset import load_dataset
-from digits_recognition.mlflow_setup import mlflow_setup
+from digits_recognition.mlflow_setup import mlflow_experiment_setup
 from digits_recognition.training_inference import infer_logits, setup_model
 
 
@@ -163,7 +163,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    mlflow_setup()
+    mlflow_experiment_setup()
     os.environ.pop('MLFLOW_RUN_ID', None)
 
     run = mlflow.start_run()

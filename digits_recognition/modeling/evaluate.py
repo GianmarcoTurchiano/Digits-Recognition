@@ -15,7 +15,7 @@ from sklearn.metrics import (
 from tqdm import tqdm
 
 from digits_recognition.load_dataset import load_dataset
-from digits_recognition.mlflow_setup import mlflow_setup
+from digits_recognition.mlflow_setup import mlflow_experiment_setup
 from digits_recognition.evaluation_inference import infer_labels, load_model
 
 
@@ -71,7 +71,7 @@ def setup_components(test_set_path, batch_size, model_path, random_seed=None):
     """
     Initializes and returns components that are required for evaluation.
     """
-    mlflow_setup()
+    mlflow_experiment_setup()
 
     model, device = load_model(model_path, random_seed)
 
