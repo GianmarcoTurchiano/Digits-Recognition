@@ -24,8 +24,8 @@ training:
   batch_size: 64
   patience: 10
   learning_rate: 0.001
-  weight_decay: 2.5e-3
+  weight_decay: 1.5e-3
   random_seed: 42
-  polynomial_scheduler_power: 42
+  polynomial_scheduler_power: 4.0
 
 behavioral_tests: digits_recognition/modeling/behavioral_tests/
