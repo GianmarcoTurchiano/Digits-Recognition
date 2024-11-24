@@ -1,9 +1,6 @@
 """
 Code for preparing the dataset for usage with PyTorch.
 """
-
-import pickle
-
 import torch
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
@@ -12,16 +9,7 @@ from PIL import Image
 import numpy as np
 
 from digits_recognition.modeling.classifier import INPUT_HEIGHT, INPUT_WIDTH
-
-
-def _load_data(path):
-    """
-    Returns the content of a pickle file.
-    """
-    with open(path, 'rb') as file:
-        data = pickle.load(file)
-
-    return data
+from digits_recognition.load_pickle_data import load_pickle_data
 
 
 class DigitsDataset(Dataset):
@@ -65,7 +53,7 @@ data_augmentation = transforms.Compose([
 ])
 
 
-def load_dataset(
+def get_data_loader(
     path,
     batch_size,
     device,
@@ -77,7 +65,7 @@ def load_dataset(
     """
     Returns a loader from the contents of a pickle file containing an 'X' and 'y' key.
     """
-    data = _load_data(path)
+    data = load_pickle_data(path)
 
     if augment:
         transform = data_augmentation

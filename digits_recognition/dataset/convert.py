@@ -2,10 +2,10 @@
 Code for train, test, validation split of the dataset.
 """
 import argparse
-import pickle
 
 import numpy as np
-from sklearn.model_selection import train_test_split
+
+from digits_recognition.save_pickle_data import save_pickle_data
 
 
 def load_ubyte_images(filename):
@@ -32,26 +32,12 @@ def load_ubyte_labels(filename):
     return labels
 
 
-def save_dataset(out_path, features, labels):
-    """
-    Saves a pickle file with keys 'X' and 'y'.
-    """
-    with open(out_path, 'wb') as file:
-        pickle.dump({
-            'X': features,
-            'y': labels
-        }, file)
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-p', '--in_path', type=str)
     parser.add_argument('-tr', '--train_set_path', type=str)
     parser.add_argument('-ts', '--test_set_path', type=str)
-    parser.add_argument('-v', '--val_set_path', type=str)
-    parser.add_argument('-r', '--validation_ratio', type=float)
-    parser.add_argument('-s', '--split_seed', type=int)
 
     args = parser.parse_args()
 
@@ -69,23 +55,11 @@ if __name__ == '__main__':
         f'{args.in_path}/t10k-labels-idx1-ubyte/t10k-labels-idx1-ubyte'
     )
 
-    # Split the data: 80% for training, 20% for validation
-    X_train, X_val, y_train, y_val = train_test_split(
-        train_images,
-        train_labels,
-        stratify=train_labels,
-        test_size=args.validation_ratio,
-        random_state=args.split_seed
-    )
-
-    save_dataset(args.train_set_path, X_train, y_train)
-    save_dataset(args.val_set_path, X_val, y_val)
-    save_dataset(args.test_set_path, test_images, test_labels)
+    save_pickle_data(args.train_set_path, train_images, train_labels)
+    save_pickle_data(args.test_set_path, test_images, test_labels)
 
     # Check the shapes
-    print("Training Images:", X_train.shape)
-    print("Validation Images:", X_val.shape)
-    print("Training Labels:", y_train.shape)
-    print("Validation Labels:", y_val.shape)
+    print("Training Images:", train_labels.shape)
+    print("Training Labels:", train_labels.shape)
     print("Test Images:", test_images.shape)
     print("Test Labels:", test_labels.shape)

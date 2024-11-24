@@ -12,7 +12,7 @@ from torch.optim.lr_scheduler import PolynomialLR
 from tqdm import tqdm
 from dotenv import set_key
 
-from digits_recognition.load_dataset import load_dataset
+from digits_recognition.modeling.dataset import get_data_loader
 from digits_recognition.mlflow_setup import mlflow_experiment_setup
 from digits_recognition.training_inference import infer_logits, setup_model
 
@@ -85,7 +85,7 @@ def setup_training_components(
     """
     model, device = setup_model(random_seed)
 
-    loader = load_dataset(
+    loader = get_data_loader(
         train_set_path,
         shuffle=True,
         batch_size=batch_size,
@@ -137,7 +137,7 @@ def setup_components(
         random_seed,
     )
 
-    val_loader = load_dataset(
+    val_loader = get_data_loader(
         val_set_path,
         batch_size=batch_size,
         device=device,
@@ -237,5 +237,6 @@ if __name__ == '__main__':
 
         scheduler.step()
 
+    model.load_state_dict(torch.load(args.model_path, weights_only=True))
     mlflow.pytorch.log_model(model, "model")
     mlflow.end_run()

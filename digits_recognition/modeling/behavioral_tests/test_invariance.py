@@ -2,7 +2,7 @@ import pytest
 import torch
 from torchvision.transforms import functional as F
 
-from digits_recognition.load_dataset import (
+from digits_recognition.load_pickle_data import (
     rotation_transform,
     gaussian_blur_transform,
     resize_crop_transform,

@@ -14,7 +14,7 @@ from sklearn.metrics import (
 )
 from tqdm import tqdm
 
-from digits_recognition.load_dataset import load_dataset
+from digits_recognition.modeling.dataset import get_data_loader
 from digits_recognition.mlflow_setup import mlflow_experiment_setup
 from digits_recognition.evaluation_inference import infer_labels, load_model
 
@@ -75,7 +75,7 @@ def setup_components(test_set_path, batch_size, model_path, random_seed=None):
 
     model, device = load_model(model_path, random_seed)
 
-    loader = load_dataset(
+    loader = get_data_loader(
         test_set_path,
         batch_size=batch_size,
         device=device
