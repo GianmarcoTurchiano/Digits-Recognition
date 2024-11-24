@@ -34,6 +34,7 @@ stages:
     - digits_recognition/modeling/train.py
     - digits_recognition/load_dataset.py
     - digits_recognition/mlflow_setup.py
+    - digits_recognition/training_inference.py
     - ./data/processed/val_set.pkl
     - ./data/processed/train_set.pkl
     outs:
@@ -46,5 +47,7 @@ stages:
     - digits_recognition/modeling/classifier.py
     - digits_recognition/load_dataset.py
     - digits_recognition/mlflow_setup.py
+    - digits_recognition/training_inference.py
+    - digits_recognition/evaluation_inference.py
     - ./data/processed/test_set.pkl
     - ./models/digit_classifier.pth

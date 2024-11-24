@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <div>
+        <h1>Digits Recognizer</h1>
+    </div>
+
+    <div>
+        <div>
+            <h2>Annotations</h2>
+        </div>
+
+        <div>
+            <form action="/annotations" method="post" enctype="multipart/form-data">
+                <div>
+                    <input type="file" name="file">
+                </div>
+                
+                <br>
+    
+                <div>
+                    <button type="submit">Annotate</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <div>
+            <h2>Predictions</h2>
+        </div>
+
+        <div>
+            <div>
+                <h3>Labels</h3>
+            </div>
+    
+            <div>
+                <form action="/predictions" method="post" enctype="multipart/form-data">
+                    <div>
+                        <input type="file" name="file">
+                    </div>
+                    
+                    <br>
+    
+                    <div>
+                        <button type="submit">Predict</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    
+        <div>
+            <div>
+                <h3>Probabilities</h3>
+            </div>
+    
+            <div>
+                <form action="/probabilities" method="post" enctype="multipart/form-data">
+                    <div>
+                        <input type="file" name="file">
+                    </div>
+                    
+                    <br>
+    
+                    <div>
+                        <button type="submit">Predict</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

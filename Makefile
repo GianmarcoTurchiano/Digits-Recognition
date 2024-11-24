@@ -57,6 +57,10 @@ test:
 rollback:
 	git reset --soft HEAD~1
 
+.PHONY: api
+api:
+	uvicorn digits_recognition.api.endpoints:app --reload
+
 #################################################################################
 # PROJECT RULES                                                                 #
 #################################################################################

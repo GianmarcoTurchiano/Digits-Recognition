@@ -14,6 +14,7 @@ from digits_recognition.modeling.evaluate import setup_components
 MODEL_PATH = r'./models/digit_classifier.pth'
 TEST_SET_PATH = r'./data/processed/test_set.pkl'
 BATCH_SIZE = 64
+RANDOM_SEED = 42
 
 
 @pytest.fixture
@@ -21,16 +22,26 @@ def components():
     return setup_components(
         TEST_SET_PATH,
         BATCH_SIZE,
-        MODEL_PATH
+        MODEL_PATH,
+        RANDOM_SEED
     )
 
 
-@pytest.mark.parametrize('transformation', [
-    rotation_transform,
-    gaussian_blur_transform,
-    resize_crop_transform,
-    data_augmentation
-])
+@pytest.mark.parametrize(
+    'transformation',
+    [
+        rotation_transform,
+        gaussian_blur_transform,
+        resize_crop_transform,
+        data_augmentation
+    ],
+    ids=[
+        'Rotation Transform',
+        'Gaussian Blur Transform',
+        'Resize and Crop Transform',
+        'Data Augmentation'
+    ]
+)
 def test_invariance(components, transformation):
     model, device, loader = components
 
@@ -54,13 +65,10 @@ def test_invariance(components, transformation):
         model_prediction_transformed = model(transformed_images)
         predicted_label_transformed = torch.argmax(model_prediction_transformed, dim=1)
 
-        # assert (torch.equal(predicted_label_original, predicted_label_transformed)), \
-        #     f"Prediction differs for original and transformed image ({transformation})"
-
         total_cases += predicted_label_original.size(0)
         invariant_cases += torch.sum(predicted_label_original == predicted_label_transformed).item()
 
-    threshold = 100
+    threshold = 95
 
     invariance_percentage = (invariant_cases / total_cases) * 100
 

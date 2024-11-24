@@ -16,7 +16,7 @@ from tqdm import tqdm
 
 from digits_recognition.load_dataset import load_dataset
 from digits_recognition.mlflow_setup import mlflow_setup
-from digits_recognition.modeling.classifier import DigitClassifier
+from digits_recognition.evaluation_inference import infer_labels, load_model
 
 
 def inference_step(model, device, loader):
@@ -30,11 +30,9 @@ def inference_step(model, device, loader):
         all_labels = []
 
         for images, labels in tqdm(loader):
-            images, labels = images.to(device), labels.to(device)
+            labels = labels.to(device)
 
-            logits = model(images)
-
-            _, predicted = torch.max(logits, 1)
+            predicted = infer_labels(model, device, images)
 
             all_preds.extend(predicted.cpu().numpy())
             all_labels.extend(labels.cpu().numpy())
@@ -69,26 +67,19 @@ def evaluation_step(all_labels, all_preds):
     )
 
 
-def setup_components(test_set_path, batch_size, model_path):
+def setup_components(test_set_path, batch_size, model_path, random_seed=None):
     """
     Initializes and returns components that are required for evaluation.
     """
     mlflow_setup()
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model, device = load_model(model_path, random_seed)
 
     loader = load_dataset(
         test_set_path,
         batch_size=batch_size,
         device=device
     )
-
-    model = DigitClassifier()
-
-    if model_path:
-        model.load_state_dict(torch.load(model_path, weights_only=True))
-
-    model.to(device)
 
     return model, device, loader
 

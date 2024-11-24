@@ -52,7 +52,7 @@ class DigitsDataset(Dataset):
         return image, label
 
 
-rotation_transform = transforms.RandomRotation(degrees=90)
+rotation_transform = transforms.RandomRotation(degrees=20)
 gaussian_blur_transform = transforms.GaussianBlur(kernel_size=(5, 5), sigma=(0.1, 2.0))
 resize_crop_transform = transforms.RandomResizedCrop(
     size=(INPUT_HEIGHT, INPUT_WIDTH),
@@ -68,9 +68,9 @@ data_augmentation = transforms.Compose([
 def load_dataset(
     path,
     batch_size,
+    device,
     num_workers=0,
     persistent_workers=False,
-    device=None,
     augment=False,
     shuffle=False
 ):

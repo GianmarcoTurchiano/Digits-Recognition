@@ -46,7 +46,7 @@ debugpy==1.8.8
 decorator==5.1.1
 Deprecated==1.2.14
 dictdiffer==0.9.0
--e git+ssh://git@github.com/GianmarcoTurchiano/Digits-Recognition.git@10d5f194dace76b18c5c115f2a06d28be6299696#egg=digits_recognition
+-e git+ssh://git@github.com/GianmarcoTurchiano/Digits-Recognition.git@9eb256682c37d2f9ec0fdce83c4d65ce4b9ca291#egg=digits_recognition
 dill==0.3.9
 diskcache==5.6.3
 distro==1.9.0
@@ -63,6 +63,7 @@ dvc-studio-client==0.21.0
 dvc-task==0.40.2
 entrypoints==0.4
 executing==2.1.0
+fastapi==0.115.5
 filelock==3.16.1
 flake8==7.1.1
 Flask==3.1.0
@@ -136,6 +137,7 @@ nvidia-nccl-cu12==2.21.5
 nvidia-nvjitlink-cu12==12.4.127
 nvidia-nvtx-cu12==12.4.127
 omegaconf==2.3.0
+opencv-python==4.10.0.84
 opentelemetry-api==1.28.1
 opentelemetry-sdk==1.28.1
 opentelemetry-semantic-conventions==0.49b1
@@ -172,6 +174,7 @@ pyparsing==3.2.0
 pytest==8.3.3
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
+python-multipart==0.0.17
 pytz==2024.2
 PyYAML==6.0.2
 pyzmq==26.2.0
@@ -198,6 +201,7 @@ SQLAlchemy==2.0.36
 sqlparse==0.5.2
 sqltrie==0.11.1
 stack-data==0.6.3
+starlette==0.41.3
 sympy==1.13.1
 tabulate==0.9.0
 tenacity==9.0.0
@@ -216,6 +220,7 @@ typing-inspect==0.9.0
 typing_extensions==4.12.2
 tzdata==2024.2
 urllib3==2.2.3
+uvicorn==0.32.1
 vine==5.1.0
 voluptuous==0.15.2
 wcwidth==0.2.13

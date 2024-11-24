@@ -14,7 +14,7 @@ from dotenv import set_key
 
 from digits_recognition.load_dataset import load_dataset
 from digits_recognition.mlflow_setup import mlflow_setup
-from digits_recognition.modeling.classifier import DigitClassifier
+from digits_recognition.training_inference import infer_logits, setup_model
 
 
 def training_step(model, loader, device, optimizer, criterion):
@@ -59,9 +59,9 @@ def validation_step(model, loader, device, criterion):
             desc="Validation",
             leave=False
         ):
-            images, labels = images.to(device), labels.to(device)
+            labels = labels.to(device)
 
-            logits = model(images)
+            logits = infer_logits(model, device, images)
 
             loss = criterion(logits, labels)
 
@@ -77,16 +77,13 @@ def setup_training_components(
     weight_decay,
     epochs,
     polynomial_scheduler_power,
-    data_augmentation=True
+    data_augmentation=True,
+    random_seed=None,
 ):
     """
     Initializes and returns components that are required for training.
     """
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    model = DigitClassifier()
-    model.eval()
-    model.to(device)
+    model, device = setup_model(random_seed)
 
     loader = load_dataset(
         train_set_path,
@@ -123,7 +120,8 @@ def setup_components(
     weight_decay,
     epochs,
     polynomial_scheduler_power,
-    train_data_augmentation=False
+    train_data_augmentation=False,
+    random_seed=None,
 ):
     """
     Initializes and returns components that are required for training and for validation.
@@ -135,7 +133,8 @@ def setup_components(
         weight_decay,
         epochs,
         polynomial_scheduler_power,
-        train_data_augmentation
+        train_data_augmentation,
+        random_seed,
     )
 
     val_loader = load_dataset(
@@ -164,8 +163,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    torch.manual_seed(args.random_seed)
-
     mlflow_setup()
     os.environ.pop('MLFLOW_RUN_ID', None)
 
@@ -189,7 +186,8 @@ if __name__ == '__main__':
         args.weight_decay,
         args.epochs,
         args.polynomial_scheduler_power,
-        args.train_data_augmentation
+        args.train_data_augmentation,
+        args.random_seed
     )
 
     best_val_loss = float('inf')
