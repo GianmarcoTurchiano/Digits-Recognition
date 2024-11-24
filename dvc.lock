@@ -68,7 +68,7 @@ stages:
   train:
     cmd: python digits_recognition/modeling/train.py -t ./data/processed/train_set.pkl
       -v ./data/processed/val_set.pkl -m ./models/digit_classifier.pth --patience
-      10 --epochs 100 --learning_rate 0.001 --weight_decay 2e-3 --random_seed 42 --batch_size
+      10 --epochs 100 --learning_rate 0.001 --weight_decay 3e-3 --random_seed 42 --batch_size
       64 --polynomial_scheduler_power 4.0
     deps:
     - path: ./data/processed/train_set.pkl
@@ -81,25 +81,25 @@ stages:
       md5: e7b6281b2cbe1c052ab286b3c8837342
       size: 7065211
       isexec: true
-    - path: digits_recognition/load_dataset.py
-      hash: md5
-      md5: 2618b3e1e3bc49850be3c90a03b9b1f7
-      size: 2577
-      isexec: true
     - path: digits_recognition/mlflow_setup.py
       hash: md5
-      md5: af6413bf69a024cab147327f6822c7a6
-      size: 525
+      md5: dc88ffceb0f4a5a277b724947be9d705
+      size: 1259
       isexec: true
     - path: digits_recognition/modeling/classifier.py
       hash: md5
       md5: d8ab6344c6234f2188c9c0f4f4ce446d
       size: 1712
       isexec: true
+    - path: digits_recognition/modeling/dataset.py
+      hash: md5
+      md5: 6f8417ad6d61e8ff415afdff5be5ddd2
+      size: 2468
+      isexec: true
     - path: digits_recognition/modeling/train.py
       hash: md5
-      md5: 78e4580a438b2e5047a3dafc2625c370
-      size: 6572
+      md5: 420e20e6a653fab17aba1fa07b56bcb8
+      size: 6681
       isexec: true
     - path: digits_recognition/training_inference.py
       hash: md5
@@ -109,7 +109,7 @@ stages:
     outs:
     - path: ./models/digit_classifier.pth
       hash: md5
-      md5: 91acfe06833cff8272856662b1fd1fdd
+      md5: 7f349ccb2764bd809178f83f93b8e9f7
       size: 1107318
       isexec: true
   evaluate:
@@ -123,7 +123,7 @@ stages:
       isexec: true
     - path: ./models/digit_classifier.pth
       hash: md5
-      md5: 91acfe06833cff8272856662b1fd1fdd
+      md5: 7f349ccb2764bd809178f83f93b8e9f7
       size: 1107318
       isexec: true
     - path: digits_recognition/evaluation_inference.py
@@ -131,28 +131,94 @@ stages:
       md5: a51f927893071ee8028f83c0219a6ef3
       size: 707
       isexec: true
-    - path: digits_recognition/load_dataset.py
-      hash: md5
-      md5: 2618b3e1e3bc49850be3c90a03b9b1f7
-      size: 2577
-      isexec: true
     - path: digits_recognition/mlflow_setup.py
       hash: md5
-      md5: af6413bf69a024cab147327f6822c7a6
-      size: 525
+      md5: dc88ffceb0f4a5a277b724947be9d705
+      size: 1259
       isexec: true
     - path: digits_recognition/modeling/classifier.py
       hash: md5
       md5: d8ab6344c6234f2188c9c0f4f4ce446d
       size: 1712
       isexec: true
+    - path: digits_recognition/modeling/dataset.py
+      hash: md5
+      md5: 6f8417ad6d61e8ff415afdff5be5ddd2
+      size: 2468
+      isexec: true
     - path: digits_recognition/modeling/evaluate.py
       hash: md5
-      md5: 33233eb6da8623cea0b0ab6566b30262
-      size: 3375
+      md5: 0123fdbafd80064054bfb4978b3ebd03
+      size: 3407
       isexec: true
     - path: digits_recognition/training_inference.py
       hash: md5
       md5: fd588e8fb5779cc21e0866bfbcf31113
       size: 691
+      isexec: true
+  convert:
+    cmd: python digits_recognition/dataset/convert.py -p ./data/interim/unzipped -tr
+      ./data/interim/train_set.pkl -ts ./data/processed/test_set.pkl
+    deps:
+    - path: ./data/interim/unzipped
+      hash: md5
+      md5: 7e0914f66dbe3c1571a44a806ddc1907.dir
+      size: 109900096
+      nfiles: 8
+    - path: digits_recognition/dataset/convert.py
+      hash: md5
+      md5: 2c9b4f787268c13ca1431f6730f41d87
+      size: 2013
+      isexec: true
+    - path: digits_recognition/save_pickle_data.py
+      hash: md5
+      md5: d200d0436545aa513e3c95fe644a8b8d
+      size: 313
+      isexec: true
+    outs:
+    - path: ./data/interim/train_set.pkl
+      hash: md5
+      md5: 60baea2076aa9ff2068816be648082a8
+      size: 47100211
+      isexec: true
+    - path: ./data/processed/test_set.pkl
+      hash: md5
+      md5: 5bca9cc2dfb6e121ecb7b9e39759d839
+      size: 7850211
+      isexec: true
+  validation_split:
+    cmd: python digits_recognition/dataset/validation_split.py -d ./data/interim/train_set.pkl
+      -t ./data/processed/train_set.pkl -v ./data/processed/val_set.pkl --split_seed
+      42 --validation_ratio 0.15
+    deps:
+    - path: ./data/interim/train_set.pkl
+      hash: md5
+      md5: 60baea2076aa9ff2068816be648082a8
+      size: 47100211
+      isexec: true
+    - path: digits_recognition/dataset/validation_split.py
+      hash: md5
+      md5: fe2567d920b038ab54a5497e06ceabdb
+      size: 1233
+      isexec: true
+    - path: digits_recognition/load_pickle_data.py
+      hash: md5
+      md5: 52b31b788267abfe0953d69277e395cd
+      size: 239
+      isexec: true
+    - path: digits_recognition/save_pickle_data.py
+      hash: md5
+      md5: d200d0436545aa513e3c95fe644a8b8d
+      size: 313
+      isexec: true
+    outs:
+    - path: ./data/processed/train_set.pkl
+      hash: md5
+      md5: 28354a357efaad41363ae691aa5575a6
+      size: 40035211
+      isexec: true
+    - path: ./data/processed/val_set.pkl
+      hash: md5
+      md5: e7b6281b2cbe1c052ab286b3c8837342
+      size: 7065211
       isexec: true

@@ -13,11 +13,18 @@ stages:
     - ./data/raw/archive.zip
     outs:
     - ./data/interim/unzipped
+  check:
+    cmd: python digits_recognition/dataset/check.py -p ./data/interim/unzipped
+    deps:
+    - digits_recognition/dataset/load_ubyte_data.py
+    - digits_recognition/dataset/check.py
+    - ./data/interim/unzipped
   convert:
     cmd: python digits_recognition/dataset/convert.py -p ./data/interim/unzipped -tr ./data/interim/train_set.pkl
       -ts ./data/processed/test_set.pkl
     deps:
     - digits_recognition/save_pickle_data.py
+    - digits_recognition/dataset/load_ubyte_data.py
     - digits_recognition/dataset/convert.py
     - ./data/interim/unzipped
     outs:
