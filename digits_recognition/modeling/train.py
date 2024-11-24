@@ -237,5 +237,5 @@ if __name__ == '__main__':
 
         scheduler.step()
 
-    mlflow.log_artifact(args.model_path)
+    mlflow.pytorch.log_model(model, "model")
     mlflow.end_run()
