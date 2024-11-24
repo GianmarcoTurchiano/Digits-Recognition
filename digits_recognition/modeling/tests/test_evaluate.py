@@ -1,4 +1,6 @@
 import pytest
+import yaml
+
 from digits_recognition.modeling.evaluate import (
     inference_step,
     evaluation_step,
@@ -6,8 +8,11 @@ from digits_recognition.modeling.evaluate import (
 )
 
 
-TEST_SET_PATH = r'./data/processed/train_set.pkl'
-BATCH_SIZE = 64
+with open('params.yaml', 'r') as file:
+    params = yaml.safe_load(file)
+
+TEST_SET_PATH = params['data']['processed']['test_set']
+BATCH_SIZE = params['evaluation']['batch_size']
 
 
 @pytest.fixture

@@ -1,65 +1,82 @@
 stages:
   download:
-    cmd: python digits_recognition/dataset/download.py -o ./data/raw/archive.zip
+    cmd: python digits_recognition/dataset/download.py
+      -o ${data.raw.archive}
     deps:
     - digits_recognition/dataset/download.py
     outs:
-    - ./data/raw/archive.zip
+    - ${data.raw.archive}
   extract:
-    cmd: python digits_recognition/dataset/extract.py -z ./data/raw/archive.zip
-      -o ./data/interim/unzipped
+    cmd: python digits_recognition/dataset/extract.py
+      -z ${data.raw.archive}
+      -o ${data.interim.unzipped}
     deps:
     - digits_recognition/dataset/extract.py
-    - ./data/raw/archive.zip
+    - ${data.raw.archive}
     outs:
-    - ./data/interim/unzipped
+    - ${data.interim.unzipped}
   check:
-    cmd: python digits_recognition/dataset/check.py -p ./data/interim/unzipped
+    cmd: python digits_recognition/dataset/check.py
+      -p ${data.interim.unzipped}
     deps:
     - digits_recognition/dataset/load_ubyte_data.py
     - digits_recognition/dataset/check.py
-    - ./data/interim/unzipped
+    - ${data.interim.unzipped}
   convert:
-    cmd: python digits_recognition/dataset/convert.py -p ./data/interim/unzipped -tr ./data/interim/train_set.pkl
-      -ts ./data/processed/test_set.pkl
+    cmd: python digits_recognition/dataset/convert.py
+      -p ${data.interim.unzipped}
+      -tr ${data.interim.train_set}
+      -ts ${data.processed.test_set}
     deps:
     - digits_recognition/save_pickle_data.py
     - digits_recognition/dataset/load_ubyte_data.py
     - digits_recognition/dataset/convert.py
-    - ./data/interim/unzipped
+    - ${data.interim.unzipped}
     outs:
-    - ./data/processed/test_set.pkl
-    - ./data/interim/train_set.pkl
+    - ${data.processed.test_set}
+    - ${data.interim.train_set}
   validation_split:
-    cmd: python digits_recognition/dataset/validation_split.py -d ./data/interim/train_set.pkl
-      -t ./data/processed/train_set.pkl -v ./data/processed/val_set.pkl
-      --split_seed 42 --validation_ratio 0.15
+    cmd: python digits_recognition/dataset/validation_split.py
+      -d ${data.interim.train_set}
+      -t ${data.processed.train_set}
+      -v ${data.processed.val_set}
+      --split_seed ${data_split.random_seed}
+      --validation_ratio ${data_split.ratio}
     deps:
     - digits_recognition/save_pickle_data.py
     - digits_recognition/load_pickle_data.py
     - digits_recognition/dataset/validation_split.py
-    - ./data/interim/train_set.pkl
+    - ${data.interim.train_set}
     outs:
-    - ./data/processed/val_set.pkl
-    - ./data/processed/train_set.pkl
+    - ${data.processed.val_set}
+    - ${data.processed.train_set}
   train:
-    cmd: python digits_recognition/modeling/train.py -t ./data/processed/train_set.pkl
-      -v ./data/processed/val_set.pkl -m ./models/digit_classifier.pth 
-      --patience 10 --epochs 100 --learning_rate 0.001 --weight_decay 3e-3 --random_seed 42
-      --batch_size 64 --polynomial_scheduler_power 4.0
+    cmd: python digits_recognition/modeling/train.py 
+      -t ${data.processed.train_set}
+      -v ${data.processed.val_set}
+      -m ${model} 
+      --patience ${training.patience}
+      --epochs ${training.epochs}
+      --learning_rate ${training.learning_rate}
+      --weight_decay ${training.weight_decay}
+      --random_seed ${training.random_seed}
+      --batch_size ${training.batch_size}
+      --polynomial_scheduler_power ${training.polynomial_scheduler_power}
     deps:
     - digits_recognition/modeling/classifier.py
     - digits_recognition/modeling/train.py
     - digits_recognition/modeling/dataset.py
     - digits_recognition/mlflow_setup.py
     - digits_recognition/training_inference.py
-    - ./data/processed/val_set.pkl
-    - ./data/processed/train_set.pkl
+    - ${data.processed.val_set}
+    - ${data.processed.train_set}
     outs:
-    - ./models/digit_classifier.pth
+    - ${model}
   evaluate:
-    cmd: python digits_recognition/modeling/evaluate.py -t ./data/processed/test_set.pkl
-      -m ./models/digit_classifier.pth --batch_size 64
+    cmd: python digits_recognition/modeling/evaluate.py
+      -t ${data.processed.test_set}
+      -m ${model}
+      --batch_size ${evaluation.batch_size}
     deps:
     - digits_recognition/modeling/evaluate.py
     - digits_recognition/modeling/classifier.py
@@ -67,5 +84,11 @@ stages:
     - digits_recognition/mlflow_setup.py
     - digits_recognition/training_inference.py
     - digits_recognition/evaluation_inference.py
-    - ./data/processed/test_set.pkl
-    - ./models/digit_classifier.pth
+    - ${data.processed.test_set}
+    - ${model}
+  test_behavior:
+    cmd: python -m pytest ${behavioral_tests}
+    deps:
+    - ${behavioral_tests}
+    - ${model}
+    - ${data.processed.test_set}

@@ -1,8 +1,9 @@
 import pytest
 import torch
 from torchvision.transforms import functional as F
+import yaml
 
-from digits_recognition.load_pickle_data import (
+from digits_recognition.modeling.dataset import (
     rotation_transform,
     gaussian_blur_transform,
     resize_crop_transform,
@@ -11,10 +12,13 @@ from digits_recognition.load_pickle_data import (
 from digits_recognition.modeling.evaluate import setup_components
 
 
-MODEL_PATH = r'./models/digit_classifier.pth'
-TEST_SET_PATH = r'./data/processed/test_set.pkl'
-BATCH_SIZE = 64
-RANDOM_SEED = 42
+with open('params.yaml', 'r') as file:
+    params = yaml.safe_load(file)
+
+MODEL_PATH = params['model']
+TEST_SET_PATH = params['data']['processed']['test_set']
+BATCH_SIZE = params['evaluation']['batch_size']
+RANDOM_SEED = params['evaluation']['random_seed']
 
 
 @pytest.fixture

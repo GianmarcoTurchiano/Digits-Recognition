@@ -1,4 +1,6 @@
 import pytest
+import yaml
+
 from digits_recognition.modeling.train import (
     training_step,
     validation_step,
@@ -7,13 +9,16 @@ from digits_recognition.modeling.train import (
 )
 
 
-TRAIN_SET_PATH = r'./data/processed/train_set.pkl'
-VAL_SET_PATH = r'./data/processed/val_set.pkl'
-BATCH_SIZE = 64
-LEARNING_RATE = 1e-2
-WEIGHT_DECAY = 1e-2
-EPOCHS = 1
-POLYNOMIAL_SCHEDULER_POWER = 1
+with open('params.yaml', 'r') as file:
+    params = yaml.safe_load(file)
+
+TRAIN_SET_PATH = params['data']['processed']['train_set']
+VAL_SET_PATH = params['data']['processed']['val_set']
+BATCH_SIZE = params['training']['batch_size']
+LEARNING_RATE = params['training']['learning_rate']
+WEIGHT_DECAY = params['training']['weight_decay']
+EPOCHS = params['training']['epochs']
+POLYNOMIAL_SCHEDULER_POWER = params['training']['polynomial_scheduler_power']
 
 
 @pytest.fixture

@@ -1,0 +1,31 @@
+model: ./models/digit_classifier.pth
+
+data:
+  raw:
+    archive: ./data/raw/archive.zip
+  interim:
+    unzipped: ./data/interim/unzipped
+    train_set: ./data/interim/train_set.pkl
+  processed:
+    test_set: ./data/processed/test_set.pkl
+    train_set: ./data/processed/train_set.pkl
+    val_set: ./data/processed/val_set.pkl
+
+data_split:
+  random_seed: 42
+  ratio: 0.15
+
+evaluation:
+  batch_size: 64
+  random_seed: 42
+
+training:
+  epochs: 100
+  batch_size: 64
+  patience: 10
+  learning_rate: 0.001
+  weight_decay: 2.5e-3
+  random_seed: 42
+  polynomial_scheduler_power: 42
+
+behavioral_tests: digits_recognition/modeling/behavioral_tests/
