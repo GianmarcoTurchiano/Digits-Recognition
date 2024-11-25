@@ -46,4 +46,6 @@ def mlflow_model_setup():
     model_uri = f"models:/{model_name}/{latest_version}"
     model = mlflow.pytorch.load_model(model_uri, map_location=device)
 
+    print(f'Model loaded from: "{model_uri}"')
+
     return model, device
