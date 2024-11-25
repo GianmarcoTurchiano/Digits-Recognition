@@ -66,8 +66,10 @@ stages:
     - digits_recognition/modeling/classifier.py
     - digits_recognition/modeling/train.py
     - digits_recognition/modeling/dataset.py
-    - digits_recognition/mlflow_setup.py
-    - digits_recognition/training_inference.py
+    - digits_recognition/modeling/init_model.py
+    - digits_recognition/dagshub_setup.py
+    - digits_recognition/modeling/mlflow_experiment_setup.py
+    - digits_recognition/infer_logits.py
     - ${data.processed.val_set}
     - ${data.processed.train_set}
     outs:
@@ -81,9 +83,12 @@ stages:
     - digits_recognition/modeling/evaluate.py
     - digits_recognition/modeling/classifier.py
     - digits_recognition/modeling/dataset.py
-    - digits_recognition/mlflow_setup.py
-    - digits_recognition/training_inference.py
-    - digits_recognition/evaluation_inference.py
+    - digits_recognition/modeling/init_model.py
+    - digits_recognition/modeling/load_model.py
+    - digits_recognition/modeling/mlflow_experiment_setup.py
+    - digits_recognition/dagshub_setup.py
+    - digits_recognition/infer_logits.py
+    - digits_recognition/infer_labels.py
     - ${data.processed.test_set}
     - ${model}
   test_behavior:

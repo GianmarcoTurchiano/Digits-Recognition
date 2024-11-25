@@ -12,7 +12,7 @@ import cv2
 import numpy as np
 
 
-from digits_recognition.mlflow_setup import mlflow_model_setup
+from digits_recognition.api.mlflow_model_setup import mlflow_model_setup
 from digits_recognition.api.inference import (
     compute_predictions,
     compute_probabilities,

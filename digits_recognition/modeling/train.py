@@ -13,8 +13,9 @@ from tqdm import tqdm
 from dotenv import set_key
 
 from digits_recognition.modeling.dataset import get_data_loader
-from digits_recognition.mlflow_setup import mlflow_experiment_setup
-from digits_recognition.training_inference import infer_logits, setup_model
+from digits_recognition.modeling.mlflow_experiment_setup import mlflow_experiment_setup
+from digits_recognition.infer_logits import infer_logits
+from digits_recognition.modeling.init_model import init_model
 
 
 def training_step(model, loader, device, optimizer, criterion):
@@ -83,7 +84,7 @@ def setup_training_components(
     """
     Initializes and returns components that are required for training.
     """
-    model, device = setup_model(random_seed)
+    model, device = init_model(random_seed)
 
     loader = get_data_loader(
         train_set_path,
