@@ -15,9 +15,34 @@ from sklearn.metrics import (
 from tqdm import tqdm
 import dagshub
 
+from digits_recognition.experimentation.modeling.classifier import init_model
 from digits_recognition.experimentation.modeling.dataset import get_data_loader
 from digits_recognition.infer_labels import infer_labels
-from digits_recognition.experimentation.modeling.load_model import load_model
+
+
+def load_model(
+    model_path,
+    input_height,
+    input_width,
+    input_channels,
+    class_count,
+    random_seed=None
+):
+    """
+    Instantiates the model and when a path is provided loads in the parameters.
+    """
+    model, device = init_model(input_height, input_width, input_channels, class_count, random_seed)
+
+    if model_path:
+        model_data = torch.load(model_path, weights_only=True)
+        run_id = model_data['run_id']
+        model.load_state_dict(model_data['weights'])
+    else:
+        run_id = None
+
+    model.to(device)
+
+    return model, device, run_id
 
 
 def inference_step(model, device, loader):

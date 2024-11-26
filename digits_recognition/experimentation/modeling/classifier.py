@@ -89,3 +89,19 @@ class DigitClassifier(nn.Module):
         x = self.fc2(x)
 
         return x
+
+
+def init_model(input_height, input_width, input_channels, class_count, random_seed=None):
+    """
+    Instantiates the model and loads it onto the available device.
+    """
+    if random_seed:
+        torch.manual_seed(random_seed)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    model = DigitClassifier(input_height, input_width, input_channels, class_count)
+
+    model.to(device)
+
+    return model, device

@@ -13,7 +13,7 @@ import dagshub
 
 from digits_recognition.experimentation.modeling.dataset import get_data_loader
 from digits_recognition.infer_logits import infer_logits
-from digits_recognition.experimentation.modeling.init_model import init_model
+from digits_recognition.experimentation.modeling.classifier import init_model
 
 
 def training_step(model, loader, device, optimizer, criterion):
