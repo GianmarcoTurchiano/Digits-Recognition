@@ -5,7 +5,7 @@ import torch
 from digits_recognition.modeling.classifier import DigitClassifier
 
 
-def init_model(random_seed=None):
+def init_model(input_height, input_width, input_channels, class_count, random_seed=None):
     """
     Instantiates the model and loads it onto the available device.
     """
@@ -14,7 +14,7 @@ def init_model(random_seed=None):
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    model = DigitClassifier()
+    model = DigitClassifier(input_height, input_width, input_channels, class_count)
 
     model.to(device)
 

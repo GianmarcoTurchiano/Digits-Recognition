@@ -6,7 +6,6 @@ import yaml
 from digits_recognition.modeling.dataset import (
     rotation_transform,
     gaussian_blur_transform,
-    resize_crop_transform,
     data_augmentation
 )
 from digits_recognition.modeling.evaluate import setup_components
@@ -19,6 +18,10 @@ MODEL_PATH = params['model']
 TEST_SET_PATH = params['data']['processed']['test_set']
 BATCH_SIZE = params['evaluation']['batch_size']
 RANDOM_SEED = params['evaluation']['random_seed']
+IMAGE_WIDTH = params['data']['meta']['images']['width']
+IMAGE_HEIGHT = params['data']['meta']['images']['height']
+IMAGE_CHANNELS = params['data']['meta']['images']['channels']
+CLASS_COUNT = params['data']['meta']['classes']['count']
 
 
 @pytest.fixture
@@ -27,6 +30,10 @@ def components():
         TEST_SET_PATH,
         BATCH_SIZE,
         MODEL_PATH,
+        IMAGE_HEIGHT,
+        IMAGE_WIDTH,
+        IMAGE_CHANNELS,
+        CLASS_COUNT,
         RANDOM_SEED
     )
 
@@ -36,18 +43,16 @@ def components():
     [
         rotation_transform,
         gaussian_blur_transform,
-        resize_crop_transform,
         data_augmentation
     ],
     ids=[
         'Rotation Transform',
         'Gaussian Blur Transform',
-        'Resize and Crop Transform',
         'Data Augmentation'
     ]
 )
 def test_invariance(components, transformation):
-    model, device, loader = components
+    model, device, loader, _ = components
 
     total_cases = 0
     invariant_cases = 0

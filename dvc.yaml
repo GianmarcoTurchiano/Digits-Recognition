@@ -1,15 +1,15 @@
 stages:
   download:
     cmd: python digits_recognition/dataset/download.py
-      -o ${data.raw.archive}
+      --out_path ${data.raw.archive}
     deps:
     - digits_recognition/dataset/download.py
     outs:
     - ${data.raw.archive}
   extract:
     cmd: python digits_recognition/dataset/extract.py
-      -z ${data.raw.archive}
-      -o ${data.interim.unzipped}
+      --zip_path ${data.raw.archive}
+      --out_path ${data.interim.unzipped}
     deps:
     - digits_recognition/dataset/extract.py
     - ${data.raw.archive}
@@ -17,16 +17,19 @@ stages:
     - ${data.interim.unzipped}
   check:
     cmd: python digits_recognition/dataset/check.py
-      -p ${data.interim.unzipped}
+      --path ${data.interim.unzipped}
+      --image_width ${data.meta.images.width}
+      --image_height ${data.meta.images.height}
+      --classes ${data.meta.classes.count}
     deps:
     - digits_recognition/dataset/load_ubyte_data.py
     - digits_recognition/dataset/check.py
     - ${data.interim.unzipped}
   convert:
     cmd: python digits_recognition/dataset/convert.py
-      -p ${data.interim.unzipped}
-      -tr ${data.interim.train_set}
-      -ts ${data.processed.test_set}
+      --path ${data.interim.unzipped}
+      --train_set_path ${data.interim.train_set}
+      --test_set_path ${data.processed.test_set}
     deps:
     - digits_recognition/save_pickle_data.py
     - digits_recognition/dataset/load_ubyte_data.py
@@ -37,11 +40,11 @@ stages:
     - ${data.interim.train_set}
   validation_split:
     cmd: python digits_recognition/dataset/validation_split.py
-      -d ${data.interim.train_set}
-      -t ${data.processed.train_set}
-      -v ${data.processed.val_set}
-      --split_seed ${data_split.random_seed}
-      --validation_ratio ${data_split.ratio}
+      --dataset_path ${data.interim.train_set}
+      --train_set_path ${data.processed.train_set}
+      --val_set_path ${data.processed.val_set}
+      --split_seed ${data.split.random_seed}
+      --validation_ratio ${data.split.ratio}
     deps:
     - digits_recognition/save_pickle_data.py
     - digits_recognition/load_pickle_data.py
@@ -52,9 +55,9 @@ stages:
     - ${data.processed.train_set}
   train:
     cmd: python digits_recognition/modeling/train.py 
-      -t ${data.processed.train_set}
-      -v ${data.processed.val_set}
-      -m ${model} 
+      --train_set_path ${data.processed.train_set}
+      --val_set_path ${data.processed.val_set}
+      --model_path ${model}
       --patience ${training.patience}
       --epochs ${training.epochs}
       --learning_rate ${training.learning_rate}
@@ -62,13 +65,18 @@ stages:
       --random_seed ${training.random_seed}
       --batch_size ${training.batch_size}
       --polynomial_scheduler_power ${training.polynomial_scheduler_power}
+      --image_width ${data.meta.images.width}
+      --image_height ${data.meta.images.height}
+      --image_channels ${data.meta.images.channels}
+      --classes ${data.meta.classes.count}
+      --repo_owner ${dagshub.repo_owner}
+      --repo_name ${dagshub.repo_name}
+      --experiment_name ${mlflow.experiment_name}
     deps:
     - digits_recognition/modeling/classifier.py
     - digits_recognition/modeling/train.py
     - digits_recognition/modeling/dataset.py
     - digits_recognition/modeling/init_model.py
-    - digits_recognition/dagshub_setup.py
-    - digits_recognition/modeling/mlflow_experiment_setup.py
     - digits_recognition/infer_logits.py
     - ${data.processed.val_set}
     - ${data.processed.train_set}
@@ -76,17 +84,22 @@ stages:
     - ${model}
   evaluate:
     cmd: python digits_recognition/modeling/evaluate.py
-      -t ${data.processed.test_set}
-      -m ${model}
+      --test_set_path ${data.processed.test_set}
+      --model_path ${model}
       --batch_size ${evaluation.batch_size}
+      --image_width ${data.meta.images.width}
+      --image_height ${data.meta.images.height}
+      --image_channels ${data.meta.images.channels}
+      --classes ${data.meta.classes.count}
+      --repo_owner ${dagshub.repo_owner}
+      --repo_name ${dagshub.repo_name}
+      --experiment_name ${mlflow.experiment_name}
     deps:
     - digits_recognition/modeling/evaluate.py
     - digits_recognition/modeling/classifier.py
     - digits_recognition/modeling/dataset.py
     - digits_recognition/modeling/init_model.py
     - digits_recognition/modeling/load_model.py
-    - digits_recognition/modeling/mlflow_experiment_setup.py
-    - digits_recognition/dagshub_setup.py
     - digits_recognition/infer_logits.py
     - digits_recognition/infer_labels.py
     - ${data.processed.test_set}

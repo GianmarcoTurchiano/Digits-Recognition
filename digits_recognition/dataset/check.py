@@ -33,7 +33,10 @@ def _append_gx_result(batch, expectation, res):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-p', '--path', type=str)
+    parser.add_argument('--path', type=str)
+    parser.add_argument('--image_width', type=int)
+    parser.add_argument('--image_height', type=int)
+    parser.add_argument('--classes', type=int)
 
     args = parser.parse_args()
 
@@ -43,12 +46,12 @@ if __name__ == '__main__':
 
     image_shape_expectation = gx.expectations.ExpectColumnValuesToBeInSet(
         column='image_shapes',
-        value_set={(28, 28)}
+        value_set={(args.image_height, args.image_width)}
     )
 
     label_value_expectation = gx.expectations.ExpectColumnValuesToBeInSet(
         column='labels',
-        value_set=range(10)
+        value_set=range(args.classes)
     )
 
     data_source = context.data_sources.add_pandas('dataset')
@@ -63,5 +66,7 @@ if __name__ == '__main__':
     _append_gx_result(test_batch, image_shape_expectation, res)
     _append_gx_result(test_batch, label_value_expectation, res)
 
-    if not all(r.success for r in res):
-        sys.exit(1)
+    for r in res:
+        if not r.success:
+            print(r)
+            sys.exit(1)

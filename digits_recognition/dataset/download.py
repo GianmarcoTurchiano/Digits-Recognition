@@ -21,7 +21,7 @@ def download(url):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-o', '--out_path', type=str)
+    parser.add_argument('--out_path', type=str)
     args = parser.parse_args()
 
     response = download(DATASET_URL)

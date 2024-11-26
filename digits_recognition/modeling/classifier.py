@@ -4,21 +4,16 @@ Classifier architecture
 import torch
 from torch import nn
 
-INPUT_WIDTH = 28
-INPUT_HEIGHT = 28
-CHANNEL_AMOUNT = 1
-CLASS_AMOUNT = 10
-
 
 class DigitClassifier(nn.Module):
     """
     Classifier architecture implemented in PyTorch.
     """
-    def __init__(self):
+    def __init__(self, input_height, input_width, input_channels, class_count):
         super().__init__()
 
         self.conv1 = nn.Conv2d(
-            in_channels=1,
+            in_channels=input_channels,
             out_channels=8,
             kernel_size=5,
             stride=1,
@@ -58,15 +53,25 @@ class DigitClassifier(nn.Module):
 
         self.flatten = nn.Flatten()
 
+        flatten_size = self._get_flattened_size(input_height, input_width, input_channels)
+
         self.fc1 = nn.Linear(
-            in_features=512,
-            out_features=512
+            in_features=flatten_size,
+            out_features=flatten_size
         )
 
         self.fc2 = nn.Linear(
-            in_features=512,
-            out_features=CLASS_AMOUNT
+            in_features=flatten_size,
+            out_features=class_count
         )
+
+    def _get_flattened_size(self, input_height, input_width, input_channels):
+        dummy_input = torch.zeros(1, input_channels, input_height, input_width)
+        dummy_input = self.pool1(self.conv1(dummy_input))
+        dummy_input = self.pool2(self.conv2(dummy_input))
+        dummy_input = self.pool3(self.conv3(dummy_input))
+
+        return dummy_input.numel()
 
     def forward(self, x):
         """

@@ -8,7 +8,6 @@ from torchvision.transforms import functional as F
 from PIL import Image
 import numpy as np
 
-from digits_recognition.modeling.classifier import INPUT_HEIGHT, INPUT_WIDTH
 from digits_recognition.load_pickle_data import load_pickle_data
 
 
@@ -42,14 +41,9 @@ class DigitsDataset(Dataset):
 
 rotation_transform = transforms.RandomRotation(degrees=20)
 gaussian_blur_transform = transforms.GaussianBlur(kernel_size=(5, 5), sigma=(0.1, 2.0))
-resize_crop_transform = transforms.RandomResizedCrop(
-    size=(INPUT_HEIGHT, INPUT_WIDTH),
-    scale=(0.8, 1.0)
-)
 data_augmentation = transforms.Compose([
     rotation_transform,
     gaussian_blur_transform,
-    resize_crop_transform,
 ])
 
 

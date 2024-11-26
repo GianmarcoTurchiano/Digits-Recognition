@@ -13,9 +13,9 @@ from sklearn.metrics import (
     recall_score,
 )
 from tqdm import tqdm
+import dagshub
 
 from digits_recognition.modeling.dataset import get_data_loader
-from digits_recognition.modeling.mlflow_experiment_setup import mlflow_experiment_setup
 from digits_recognition.infer_labels import infer_labels
 from digits_recognition.modeling.load_model import load_model
 
@@ -68,13 +68,27 @@ def evaluation_step(all_labels, all_preds):
     )
 
 
-def setup_components(test_set_path, batch_size, model_path, random_seed=None):
+def setup_components(
+    test_set_path,
+    batch_size,
+    model_path,
+    input_height,
+    input_width,
+    input_channels,
+    class_count,
+    random_seed=None
+):
     """
     Initializes and returns components that are required for evaluation.
     """
-    mlflow_experiment_setup()
-
-    model, device = load_model(model_path, random_seed)
+    model, device, run_id = load_model(
+        model_path,
+        input_height,
+        input_width,
+        input_channels,
+        class_count,
+        random_seed
+    )
 
     loader = get_data_loader(
         test_set_path,
@@ -82,25 +96,36 @@ def setup_components(test_set_path, batch_size, model_path, random_seed=None):
         device=device
     )
 
-    return model, device, loader
+    return model, device, loader, run_id
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-m', '--model_path', type=str)
-    parser.add_argument('-t', '--test_set_path', type=str)
-    parser.add_argument('-b', '--batch_size', type=int)
+    parser.add_argument('--model_path', type=str)
+    parser.add_argument('--test_set_path', type=str)
+    parser.add_argument('--batch_size', type=int)
+    parser.add_argument('--image_channels', type=int)
+    parser.add_argument('--image_width', type=int)
+    parser.add_argument('--image_height', type=int)
+    parser.add_argument('--classes', type=int)
+    parser.add_argument('--repo_owner', type=str)
+    parser.add_argument('--repo_name', type=str)
+    parser.add_argument('--experiment_name', type=str)
 
     args = parser.parse_args()
 
-    model, device, test_loader = setup_components(
+    dagshub.init(repo_owner=args.repo_owner, repo_name=args.repo_name, mlflow=True)
+    mlflow.set_experiment(args.experiment_name)
+
+    model, device, test_loader, run_id = setup_components(
         args.test_set_path,
         args.batch_size,
-        args.model_path
+        args.model_path,
+        args.image_height, args.image_width, args.image_channels, args.classes
     )
 
-    with mlflow.start_run():
+    with mlflow.start_run(run_id=run_id):
         all_labels, all_preds = inference_step(model, device, test_loader)
 
         (

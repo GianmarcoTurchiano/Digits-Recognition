@@ -23,8 +23,8 @@ def unzip(zip_path, out_path):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-z', '--zip_path', type=str)
-    parser.add_argument('-o', '--out_path', type=str)
+    parser.add_argument('--zip_path', type=str)
+    parser.add_argument('--out_path', type=str)
     args = parser.parse_args()
 
     unzip(args.zip_path, args.out_path)

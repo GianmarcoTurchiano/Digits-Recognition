@@ -11,11 +11,11 @@ from digits_recognition.save_pickle_data import save_pickle_data
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-d', '--dataset_path', type=str)
-    parser.add_argument('-t', '--train_set_path', type=str)
-    parser.add_argument('-v', '--val_set_path', type=str)
-    parser.add_argument('-r', '--validation_ratio', type=float)
-    parser.add_argument('-s', '--split_seed', type=int)
+    parser.add_argument('--dataset_path', type=str)
+    parser.add_argument('--train_set_path', type=str)
+    parser.add_argument('--val_set_path', type=str)
+    parser.add_argument('--validation_ratio', type=float)
+    parser.add_argument('--split_seed', type=int)
 
     args = parser.parse_args()
 

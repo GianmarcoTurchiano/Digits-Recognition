@@ -1,6 +1,16 @@
 model: ./models/digit_classifier.pth
 
 data:
+  split:
+    random_seed: 42
+    ratio: 0.15
+  meta:
+    images:
+      width: 28
+      height: 28
+      channels: 1 
+    classes:
+      count: 10
   raw:
     archive: ./data/raw/archive.zip
   interim:
@@ -10,10 +20,6 @@ data:
     test_set: ./data/processed/test_set.pkl
     train_set: ./data/processed/train_set.pkl
     val_set: ./data/processed/val_set.pkl
-
-data_split:
-  random_seed: 42
-  ratio: 0.15
 
 evaluation:
   batch_size: 64
@@ -29,3 +35,11 @@ training:
   polynomial_scheduler_power: 4.0
 
 behavioral_tests: digits_recognition/modeling/behavioral_tests/
+
+dagshub:
+  repo_owner: GianmarcoTurchiano
+  repo_name: Digits-Recognition
+
+mlflow:
+  model_name: GiaNet
+  experiment_name: '"Modified LeNet-5 model"'

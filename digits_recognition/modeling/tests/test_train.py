@@ -19,6 +19,10 @@ LEARNING_RATE = params['training']['learning_rate']
 WEIGHT_DECAY = params['training']['weight_decay']
 EPOCHS = params['training']['epochs']
 POLYNOMIAL_SCHEDULER_POWER = params['training']['polynomial_scheduler_power']
+IMAGE_WIDTH = params['data']['meta']['images']['width']
+IMAGE_HEIGHT = params['data']['meta']['images']['height']
+IMAGE_CHANNELS = params['data']['meta']['images']['channels']
+CLASS_COUNT = params['data']['meta']['classes']['count']
 
 
 @pytest.fixture
@@ -30,6 +34,10 @@ def training_components():
         WEIGHT_DECAY,
         EPOCHS,
         POLYNOMIAL_SCHEDULER_POWER,
+        IMAGE_HEIGHT,
+        IMAGE_WIDTH,
+        IMAGE_CHANNELS,
+        CLASS_COUNT
     )
 
 
@@ -42,7 +50,11 @@ def validation_components():
         LEARNING_RATE,
         WEIGHT_DECAY,
         EPOCHS,
-        POLYNOMIAL_SCHEDULER_POWER
+        POLYNOMIAL_SCHEDULER_POWER,
+        IMAGE_HEIGHT,
+        IMAGE_WIDTH,
+        IMAGE_CHANNELS,
+        CLASS_COUNT
     )
 
 
