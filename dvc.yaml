@@ -76,6 +76,7 @@ stages:
     - digits_recognition/experimentation/modeling/classifier.py
     - digits_recognition/experimentation/modeling/train.py
     - digits_recognition/experimentation/modeling/dataset.py
+    - digits_recognition/experimentation/load_pickle_data.py
     - digits_recognition/infer_logits.py
     - ${data.processed.val_set}
     - ${data.processed.train_set}
@@ -97,6 +98,7 @@ stages:
     - digits_recognition/experimentation/modeling/evaluate.py
     - digits_recognition/experimentation/modeling/classifier.py
     - digits_recognition/experimentation/modeling/dataset.py
+    - digits_recognition/experimentation/load_pickle_data.py
     - digits_recognition/infer_logits.py
     - digits_recognition/infer_labels.py
     - ${data.processed.test_set}
