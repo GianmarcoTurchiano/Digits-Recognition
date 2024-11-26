@@ -28,11 +28,11 @@ evaluation:
 training:
   epochs: 100
   batch_size: 64
-  patience: 10
+  patience: 20
   learning_rate: 0.001
   weight_decay: 1.5e-3
   random_seed: 42
-  polynomial_scheduler_power: 4.0
+  polynomial_scheduler_power: 2.0
 
 behavioral_tests: digits_recognition/experimentation/modeling/behavioral_tests/
 

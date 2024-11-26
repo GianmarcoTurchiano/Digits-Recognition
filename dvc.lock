@@ -1,12 +1,13 @@
 schema: '2.0'
 stages:
   download:
-    cmd: python digits_recognition/dataset/download.py -o ./data/raw/archive.zip
+    cmd: python digits_recognition/experimentation/dataset/download.py --out_path
+      ./data/raw/archive.zip
     deps:
-    - path: digits_recognition/dataset/download.py
+    - path: digits_recognition/experimentation/dataset/download.py
       hash: md5
-      md5: c830cd8c0db305e8ab44c073d23b1aef
-      size: 784
+      md5: 03aa7acda8f74427e843d09a73ce4cc3
+      size: 778
       isexec: true
     outs:
     - path: ./data/raw/archive.zip
@@ -15,18 +16,18 @@ stages:
       size: 23112702
       isexec: true
   extract:
-    cmd: python digits_recognition/dataset/extract.py -z ./data/raw/archive.zip -o
-      ./data/interim/unzipped
+    cmd: python digits_recognition/experimentation/dataset/extract.py --zip_path ./data/raw/archive.zip
+      --out_path ./data/interim/unzipped
     deps:
     - path: ./data/raw/archive.zip
       hash: md5
       md5: 72a645a3fd2da4fd0adc12c5f38956d0
       size: 23112702
       isexec: true
-    - path: digits_recognition/dataset/extract.py
+    - path: digits_recognition/experimentation/dataset/extract.py
       hash: md5
-      md5: 940507da356c7e390e1edf9df5549afe
-      size: 693
+      md5: 1d4c4f597ee29ba11b60fbc08a02884a
+      size: 681
       isexec: true
     outs:
     - path: ./data/interim/unzipped
@@ -66,10 +67,13 @@ stages:
       size: 7065211
       isexec: true
   train:
-    cmd: python digits_recognition/modeling/train.py -t ./data/processed/train_set.pkl
-      -v ./data/processed/val_set.pkl -m ./models/digit_classifier.pth --patience
-      10 --epochs 100 --learning_rate 0.001 --weight_decay 0.0015 --random_seed 42
-      --batch_size 64 --polynomial_scheduler_power 4.0
+    cmd: python digits_recognition/experimentation/modeling/train.py --train_set_path
+      ./data/processed/train_set.pkl --val_set_path ./data/processed/val_set.pkl --model_path
+      ./models/digit_classifier.pth --patience 20 --epochs 100 --learning_rate 0.001
+      --weight_decay 0.0015 --random_seed 42 --batch_size 64 --polynomial_scheduler_power
+      2.0 --image_width 28 --image_height 28 --image_channels 1 --classes 10 --repo_owner
+      GianmarcoTurchiano --repo_name Digits-Recognition --experiment_name "Modified
+      LeNet-5 model"
     deps:
     - path: ./data/processed/train_set.pkl
       hash: md5
@@ -81,40 +85,48 @@ stages:
       md5: b31eca6472d10a99665d3ddcf1e4cdab
       size: 7065210
       isexec: true
-    - path: digits_recognition/mlflow_setup.py
+    - path: digits_recognition/experimentation/load_pickle_data.py
       hash: md5
-      md5: dc88ffceb0f4a5a277b724947be9d705
-      size: 1259
+      md5: 52b31b788267abfe0953d69277e395cd
+      size: 239
       isexec: true
-    - path: digits_recognition/modeling/classifier.py
+    - path: digits_recognition/experimentation/modeling/classifier.py
       hash: md5
-      md5: d8ab6344c6234f2188c9c0f4f4ce446d
-      size: 1712
+      md5: ef97b8b2306d255bada0ce52bd1248ff
+      size: 2195
       isexec: true
-    - path: digits_recognition/modeling/dataset.py
+    - path: digits_recognition/experimentation/modeling/dataset.py
       hash: md5
-      md5: 6f8417ad6d61e8ff415afdff5be5ddd2
-      size: 2468
+      md5: aa0159d017ef33fd5edd1965bc296d47
+      size: 2265
       isexec: true
-    - path: digits_recognition/modeling/train.py
+    - path: digits_recognition/experimentation/modeling/init_model.py
       hash: md5
-      md5: 420e20e6a653fab17aba1fa07b56bcb8
-      size: 6681
+      md5: 169cb849033b9d9d89916e835953d1e5
+      size: 580
       isexec: true
-    - path: digits_recognition/training_inference.py
+    - path: digits_recognition/experimentation/modeling/train.py
       hash: md5
-      md5: fd588e8fb5779cc21e0866bfbcf31113
-      size: 691
+      md5: 64b0c54511f801f72fb7673f7d9414c0
+      size: 7452
+      isexec: true
+    - path: digits_recognition/infer_logits.py
+      hash: md5
+      md5: 11a16b57175bee28d15d900d76aa0591
+      size: 250
       isexec: true
     outs:
     - path: ./models/digit_classifier.pth
       hash: md5
-      md5: d2636d395e2245e7d1c9f32193d6525d
-      size: 1107318
+      md5: 7393333448999df9537ec503ee1fe4b0
+      size: 1107382
       isexec: true
   evaluate:
-    cmd: python digits_recognition/modeling/evaluate.py -t ./data/processed/test_set.pkl
-      -m ./models/digit_classifier.pth --batch_size 64
+    cmd: python digits_recognition/experimentation/modeling/evaluate.py --test_set_path
+      ./data/processed/test_set.pkl --model_path ./models/digit_classifier.pth --batch_size
+      64 --image_width 28 --image_height 28 --image_channels 1 --classes 10 --repo_owner
+      GianmarcoTurchiano --repo_name Digits-Recognition --experiment_name "Modified
+      LeNet-5 model"
     deps:
     - path: ./data/processed/test_set.pkl
       hash: md5
@@ -123,59 +135,69 @@ stages:
       isexec: true
     - path: ./models/digit_classifier.pth
       hash: md5
-      md5: d2636d395e2245e7d1c9f32193d6525d
-      size: 1107318
+      md5: 7393333448999df9537ec503ee1fe4b0
+      size: 1107382
       isexec: true
-    - path: digits_recognition/evaluation_inference.py
+    - path: digits_recognition/experimentation/load_pickle_data.py
       hash: md5
-      md5: a51f927893071ee8028f83c0219a6ef3
-      size: 707
+      md5: 52b31b788267abfe0953d69277e395cd
+      size: 239
       isexec: true
-    - path: digits_recognition/mlflow_setup.py
+    - path: digits_recognition/experimentation/modeling/classifier.py
       hash: md5
-      md5: dc88ffceb0f4a5a277b724947be9d705
-      size: 1259
+      md5: ef97b8b2306d255bada0ce52bd1248ff
+      size: 2195
       isexec: true
-    - path: digits_recognition/modeling/classifier.py
+    - path: digits_recognition/experimentation/modeling/dataset.py
       hash: md5
-      md5: d8ab6344c6234f2188c9c0f4f4ce446d
-      size: 1712
+      md5: aa0159d017ef33fd5edd1965bc296d47
+      size: 2265
       isexec: true
-    - path: digits_recognition/modeling/dataset.py
+    - path: digits_recognition/experimentation/modeling/evaluate.py
       hash: md5
-      md5: 6f8417ad6d61e8ff415afdff5be5ddd2
-      size: 2468
+      md5: f881a6ef212b983774cce941ebc73d6f
+      size: 4187
       isexec: true
-    - path: digits_recognition/modeling/evaluate.py
+    - path: digits_recognition/experimentation/modeling/init_model.py
       hash: md5
-      md5: 0123fdbafd80064054bfb4978b3ebd03
-      size: 3407
+      md5: 169cb849033b9d9d89916e835953d1e5
+      size: 580
       isexec: true
-    - path: digits_recognition/training_inference.py
+    - path: digits_recognition/experimentation/modeling/load_model.py
       hash: md5
-      md5: fd588e8fb5779cc21e0866bfbcf31113
-      size: 691
+      md5: b0e3c9e88f360f960c0ce1dbfe3e3bae
+      size: 725
+      isexec: true
+    - path: digits_recognition/infer_labels.py
+      hash: md5
+      md5: 5788b90060e40839d99c5a8a5f772c08
+      size: 343
+      isexec: true
+    - path: digits_recognition/infer_logits.py
+      hash: md5
+      md5: 11a16b57175bee28d15d900d76aa0591
+      size: 250
       isexec: true
   convert:
-    cmd: python digits_recognition/dataset/convert.py -p ./data/interim/unzipped -tr
-      ./data/interim/train_set.pkl -ts ./data/processed/test_set.pkl
+    cmd: python digits_recognition/experimentation/dataset/convert.py --path ./data/interim/unzipped
+      --train_set_path ./data/interim/train_set.pkl --test_set_path ./data/processed/test_set.pkl
     deps:
     - path: ./data/interim/unzipped
       hash: md5
       md5: 7e0914f66dbe3c1571a44a806ddc1907.dir
       size: 109900096
       nfiles: 8
-    - path: digits_recognition/dataset/convert.py
+    - path: digits_recognition/experimentation/dataset/convert.py
       hash: md5
-      md5: c160876a1c0a43bbeeca140d02253f11
-      size: 966
+      md5: 8c502c51bd3d682640362a76e0e05afe
+      size: 980
       isexec: true
-    - path: digits_recognition/dataset/load_ubyte_data.py
+    - path: digits_recognition/experimentation/dataset/load_ubyte_data.py
       hash: md5
       md5: 562f9b06534c75ebc663ff63d6629f2d
       size: 1535
       isexec: true
-    - path: digits_recognition/save_pickle_data.py
+    - path: digits_recognition/experimentation/dataset/save_pickle_data.py
       hash: md5
       md5: d200d0436545aa513e3c95fe644a8b8d
       size: 313
@@ -192,29 +214,30 @@ stages:
       size: 7850210
       isexec: true
   validation_split:
-    cmd: python digits_recognition/dataset/validation_split.py -d ./data/interim/train_set.pkl
-      -t ./data/processed/train_set.pkl -v ./data/processed/val_set.pkl --split_seed
-      42 --validation_ratio 0.15
+    cmd: python digits_recognition/experimentation/dataset/validation_split.py --dataset_path
+      ./data/interim/train_set.pkl --train_set_path ./data/processed/train_set.pkl
+      --val_set_path ./data/processed/val_set.pkl --split_seed 42 --validation_ratio
+      0.15
     deps:
     - path: ./data/interim/train_set.pkl
       hash: md5
       md5: 8c5e985077b51b619a191a2392800055
       size: 47100210
       isexec: true
-    - path: digits_recognition/dataset/validation_split.py
-      hash: md5
-      md5: fe2567d920b038ab54a5497e06ceabdb
-      size: 1233
-      isexec: true
-    - path: digits_recognition/load_pickle_data.py
-      hash: md5
-      md5: 52b31b788267abfe0953d69277e395cd
-      size: 239
-      isexec: true
-    - path: digits_recognition/save_pickle_data.py
+    - path: digits_recognition/experimentation/dataset/save_pickle_data.py
       hash: md5
       md5: d200d0436545aa513e3c95fe644a8b8d
       size: 313
+      isexec: true
+    - path: digits_recognition/experimentation/dataset/validation_split.py
+      hash: md5
+      md5: c77eea6bed7766eb867f32a3177a0291
+      size: 1243
+      isexec: true
+    - path: digits_recognition/experimentation/load_pickle_data.py
+      hash: md5
+      md5: 52b31b788267abfe0953d69277e395cd
+      size: 239
       isexec: true
     outs:
     - path: ./data/processed/train_set.pkl
@@ -228,25 +251,26 @@ stages:
       size: 7065210
       isexec: true
   check:
-    cmd: python digits_recognition/dataset/check.py -p ./data/interim/unzipped
+    cmd: python digits_recognition/experimentation/dataset/check.py --path ./data/interim/unzipped
+      --image_width 28 --image_height 28 --classes 10
     deps:
     - path: ./data/interim/unzipped
       hash: md5
       md5: 7e0914f66dbe3c1571a44a806ddc1907.dir
       size: 109900096
       nfiles: 8
-    - path: digits_recognition/dataset/check.py
+    - path: digits_recognition/experimentation/dataset/check.py
       hash: md5
-      md5: bf2ca35c87a78874b6c602c1d500917d
-      size: 1848
+      md5: dd1205c645fcb42fe7169314bbfeffdc
+      size: 2076
       isexec: true
-    - path: digits_recognition/dataset/load_ubyte_data.py
+    - path: digits_recognition/experimentation/dataset/load_ubyte_data.py
       hash: md5
       md5: 562f9b06534c75ebc663ff63d6629f2d
       size: 1535
       isexec: true
   test_behavior:
-    cmd: python -m pytest digits_recognition/modeling/behavioral_tests/
+    cmd: python -m pytest digits_recognition/experimentation/modeling/behavioral_tests/
     deps:
     - path: ./data/processed/test_set.pkl
       hash: md5
@@ -255,11 +279,11 @@ stages:
       isexec: true
     - path: ./models/digit_classifier.pth
       hash: md5
-      md5: d2636d395e2245e7d1c9f32193d6525d
-      size: 1107318
+      md5: 7393333448999df9537ec503ee1fe4b0
+      size: 1107382
       isexec: true
-    - path: digits_recognition/modeling/behavioral_tests/
+    - path: digits_recognition/experimentation/modeling/behavioral_tests/
       hash: md5
-      md5: 8a6ac5e179b80a14114b1f16da602aa7.dir
-      size: 12854
+      md5: a3f0fd5911b1bcc9c782e72548ef7634.dir
+      size: 13491
       nfiles: 3
