@@ -2,7 +2,7 @@
 Code for instantiating the model.
 """
 import torch
-from digits_recognition.modeling.classifier import DigitClassifier
+from digits_recognition.experimentation.modeling.classifier import DigitClassifier
 
 
 def init_model(input_height, input_width, input_channels, class_count, random_seed=None):

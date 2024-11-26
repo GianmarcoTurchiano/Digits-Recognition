@@ -8,7 +8,7 @@ from torchvision.transforms import functional as F
 from PIL import Image
 import numpy as np
 
-from digits_recognition.load_pickle_data import load_pickle_data
+from digits_recognition.experimentation.load_pickle_data import load_pickle_data
 
 
 class DigitsDataset(Dataset):

@@ -1,7 +1,7 @@
 import pytest
 import yaml
 
-from digits_recognition.modeling.evaluate import (
+from digits_recognition.experimentation.modeling.evaluate import (
     inference_step,
     evaluation_step,
     setup_components

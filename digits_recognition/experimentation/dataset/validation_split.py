@@ -4,8 +4,8 @@ Code for train, test, validation split of the dataset.
 import argparse
 
 from sklearn.model_selection import train_test_split
-from digits_recognition.load_pickle_data import load_pickle_data
-from digits_recognition.save_pickle_data import save_pickle_data
+from digits_recognition.experimentation.load_pickle_data import load_pickle_data
+from digits_recognition.experimentation.dataset.save_pickle_data import save_pickle_data
 
 
 if __name__ == '__main__':

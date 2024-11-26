@@ -2,7 +2,7 @@
 Code for loading the model from file.
 """
 import torch
-from digits_recognition.modeling.init_model import init_model
+from digits_recognition.experimentation.modeling.init_model import init_model
 
 
 def load_model(

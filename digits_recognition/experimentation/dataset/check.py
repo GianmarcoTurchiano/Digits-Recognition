@@ -7,7 +7,7 @@ import argparse
 import great_expectations as gx
 import pandas as pd
 
-from digits_recognition.dataset.load_ubyte_data import load_ubyte_data
+from digits_recognition.experimentation.dataset.load_ubyte_data import load_ubyte_data
 
 
 def _get_gx_batch(data_source, images, labels, asset_name):

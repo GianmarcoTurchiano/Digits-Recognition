@@ -3,12 +3,12 @@ import torch
 from torchvision.transforms import functional as F
 import yaml
 
-from digits_recognition.modeling.dataset import (
+from digits_recognition.experimentation.modeling.dataset import (
     rotation_transform,
     gaussian_blur_transform,
     data_augmentation
 )
-from digits_recognition.modeling.evaluate import setup_components
+from digits_recognition.experimentation.modeling.evaluate import setup_components
 
 
 with open('params.yaml', 'r') as file:

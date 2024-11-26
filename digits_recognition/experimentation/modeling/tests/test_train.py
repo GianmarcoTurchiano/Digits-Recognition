@@ -1,7 +1,7 @@
 import pytest
 import yaml
 
-from digits_recognition.modeling.train import (
+from digits_recognition.experimentation.modeling.train import (
     training_step,
     validation_step,
     setup_training_components,

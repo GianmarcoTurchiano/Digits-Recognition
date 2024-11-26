@@ -15,9 +15,9 @@ from sklearn.metrics import (
 from tqdm import tqdm
 import dagshub
 
-from digits_recognition.modeling.dataset import get_data_loader
+from digits_recognition.experimentation.modeling.dataset import get_data_loader
 from digits_recognition.infer_labels import infer_labels
-from digits_recognition.modeling.load_model import load_model
+from digits_recognition.experimentation.modeling.load_model import load_model
 
 
 def inference_step(model, device, loader):

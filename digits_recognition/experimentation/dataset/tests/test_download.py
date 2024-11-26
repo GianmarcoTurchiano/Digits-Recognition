@@ -1,4 +1,4 @@
-from digits_recognition.dataset.download import download, DATASET_URL
+from digits_recognition.experimentation.dataset.download import download, DATASET_URL
 
 
 def test_download():
