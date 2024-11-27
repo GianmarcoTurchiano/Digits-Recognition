@@ -65,6 +65,22 @@ rollback:
 api:
 	uvicorn digits_recognition.api.endpoints:app --reload
 
+.PHONY: install_module
+install_module:
+	pip install -e .
+	
+.PHONY: build_image
+build_image:
+	docker build -t digits_recognition_server .
+
+.PHONY: build_container
+build_container:
+	docker create -p 8000:8000 --name digits-container digits_recognition_server
+
+.PHONY: start_container
+start_container:
+	docker start -a digits-container
+
 #################################################################################
 # PROJECT RULES                                                                 #
 #################################################################################

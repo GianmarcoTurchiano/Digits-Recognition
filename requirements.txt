@@ -47,7 +47,7 @@ debugpy==1.8.8
 decorator==5.1.1
 Deprecated==1.2.14
 dictdiffer==0.9.0
--e git+ssh://git@github.com/GianmarcoTurchiano/Digits-Recognition.git@34cede66f8972231d8a582baabac6e57ffb99bdc#egg=digits_recognition
+-e git+https://github.com/GianmarcoTurchiano/Digits-Recognition@9a8737a0a3acd243e6e60e41f3c168e7d7f27b76#egg=digits_recognition
 dill==0.3.9
 diskcache==5.6.3
 distro==1.9.0
@@ -218,7 +218,7 @@ threadpoolctl==3.5.0
 tomlkit==0.13.2
 toolz==1.0.0
 torch==2.5.1
-torchaudio==2.5.1+cu118
+torchaudio==2.5.1
 torchvision==0.20.1
 tornado==6.4.1
 tqdm==4.67.0
