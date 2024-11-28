@@ -8,7 +8,7 @@ from digits_recognition.experimentation.modeling.dataset import (
     data_augmentation
 )
 from digits_recognition.experimentation.modeling.evaluate import setup_components
-from digits_recognition.infer_labels import infer_labels
+from digits_recognition.inference import infer_labels
 from digits_recognition.experimentation.modeling.tests.params import params_test
 
 

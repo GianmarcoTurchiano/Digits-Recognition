@@ -2,6 +2,7 @@ stages:
   download:
     cmd: python digits_recognition/experimentation/dataset/download.py
       --out_path ${data.raw.archive}
+      --url ${data.url}
     deps:
     - digits_recognition/experimentation/dataset/download.py
     outs:
@@ -22,7 +23,6 @@ stages:
       --image_height ${data.meta.images.height}
       --classes ${data.meta.classes.count}
     deps:
-    - digits_recognition/experimentation/dataset/load_ubyte_data.py
     - digits_recognition/experimentation/dataset/check.py
     - ${data.interim.unzipped}
   convert:
@@ -31,8 +31,6 @@ stages:
       --train_set_path ${data.interim.train_set}
       --test_set_path ${data.processed.test_set}
     deps:
-    - digits_recognition/experimentation/dataset/save_pickle_data.py
-    - digits_recognition/experimentation/dataset/load_ubyte_data.py
     - digits_recognition/experimentation/dataset/convert.py
     - ${data.interim.unzipped}
     outs:
@@ -46,8 +44,6 @@ stages:
       --split_seed ${data.split.random_seed}
       --validation_ratio ${data.split.ratio}
     deps:
-    - digits_recognition/experimentation/dataset/save_pickle_data.py
-    - digits_recognition/experimentation/load_pickle_data.py
     - digits_recognition/experimentation/dataset/validation_split.py
     - ${data.interim.train_set}
     outs:
@@ -75,9 +71,6 @@ stages:
     deps:
     - digits_recognition/experimentation/modeling/classifier.py
     - digits_recognition/experimentation/modeling/train.py
-    - digits_recognition/experimentation/modeling/dataset.py
-    - digits_recognition/experimentation/load_pickle_data.py
-    - digits_recognition/infer_logits.py
     - ${data.processed.val_set}
     - ${data.processed.train_set}
     outs:
@@ -95,12 +88,6 @@ stages:
       --repo_name ${dagshub.repo_name}
       --experiment_name ${mlflow.experiment_name}
     deps:
-    - digits_recognition/experimentation/modeling/evaluate.py
-    - digits_recognition/experimentation/modeling/classifier.py
-    - digits_recognition/experimentation/modeling/dataset.py
-    - digits_recognition/experimentation/load_pickle_data.py
-    - digits_recognition/infer_logits.py
-    - digits_recognition/infer_labels.py
     - ${data.processed.test_set}
     - ${model}
   test_behavior:

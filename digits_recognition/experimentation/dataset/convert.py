@@ -3,7 +3,7 @@ Code for train, test, validation split of the dataset.
 """
 import argparse
 
-from digits_recognition.experimentation.dataset.save_pickle_data import save_pickle_data
+from digits_recognition.experimentation.pickle_data import save_pickle_data
 from digits_recognition.experimentation.dataset.load_ubyte_data import load_ubyte_data
 
 

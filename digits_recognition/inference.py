@@ -1,8 +1,17 @@
 """
-Code for querying labels to the model.
+Code for querying the model.
 """
 import torch
-from digits_recognition.infer_logits import infer_logits
+
+
+def infer_logits(model, device, image):
+    """
+    Queries the model and outputs logits for each input.
+    """
+    image = image.to(device)
+    logits = model(image)
+
+    return logits
 
 
 def infer_labels(model, device, image):

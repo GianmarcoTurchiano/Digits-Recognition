@@ -12,7 +12,7 @@ from tqdm import tqdm
 import dagshub
 
 from digits_recognition.experimentation.modeling.dataset import get_data_loader
-from digits_recognition.infer_logits import infer_logits
+from digits_recognition.inference import infer_logits
 from digits_recognition.experimentation.modeling.classifier import init_model
 
 

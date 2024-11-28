@@ -17,7 +17,7 @@ import dagshub
 
 from digits_recognition.experimentation.modeling.classifier import init_model
 from digits_recognition.experimentation.modeling.dataset import get_data_loader
-from digits_recognition.infer_labels import infer_labels
+from digits_recognition.inference import infer_labels
 
 
 def load_model(

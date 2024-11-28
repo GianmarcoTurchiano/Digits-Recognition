@@ -4,8 +4,7 @@ Code for processing the input, querying the model and then processing the output
 import torch
 import cv2
 
-from digits_recognition.infer_labels import infer_labels
-from digits_recognition.infer_logits import infer_logits
+from digits_recognition.inference import infer_labels, infer_logits
 from digits_recognition.api.preprocess_input import find_digits
 
 

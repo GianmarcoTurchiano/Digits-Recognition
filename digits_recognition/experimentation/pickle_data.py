@@ -1,7 +1,17 @@
 """
-Code for saving the data in the pickle format.
+Code for loading and saving data in the pickle format.
 """
 import pickle
+
+
+def load_pickle_data(path):
+    """
+    Returns the content of a pickle file.
+    """
+    with open(path, 'rb') as file:
+        data = pickle.load(file)
+
+    return data
 
 
 def save_pickle_data(out_path, features, labels):
