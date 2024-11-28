@@ -34,7 +34,7 @@ training:
   random_seed: 42
   polynomial_scheduler_power: 2.0
 
-behavioral_tests: digits_recognition/experimentation/modeling/behavioral_tests/
+behavioral_tests: digits_recognition/experimentation/modeling/tests/behavioral_tests/
 
 dagshub:
   repo_owner: GianmarcoTurchiano

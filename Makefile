@@ -47,7 +47,7 @@ export_requirements:
 
 .PHONY: test_behavior
 test_behavior:
-	$(PYTHON_INTERPRETER) -m pytest digits_recognition/experimentation/modeling/behavioral_tests/
+	$(PYTHON_INTERPRETER) -m pytest digits_recognition/experimentation/modeling/tests/behavioral_tests/
 
 .PHONY: test_api
 test_api:
@@ -55,7 +55,7 @@ test_api:
 
 .PHONY: test
 test:
-	$(PYTHON_INTERPRETER) -m pytest digits_recognition/experimentation/modeling/tests/
+	$(PYTHON_INTERPRETER) -m pytest digits_recognition/experimentation/modeling/tests/functional_tests/
 
 .PHONY: rollback
 rollback:

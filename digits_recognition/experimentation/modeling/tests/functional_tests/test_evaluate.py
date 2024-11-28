@@ -1,22 +1,23 @@
 import pytest
-import yaml
 
 from digits_recognition.experimentation.modeling.evaluate import (
     inference_step,
     evaluation_step,
     setup_components
 )
+from digits_recognition.experimentation.modeling.tests.params import params_test
 
 
-with open('params.yaml', 'r') as file:
-    params = yaml.safe_load(file)
-
-TEST_SET_PATH = params['data']['processed']['test_set']
-BATCH_SIZE = params['evaluation']['batch_size']
-IMAGE_WIDTH = params['data']['meta']['images']['width']
-IMAGE_HEIGHT = params['data']['meta']['images']['height']
-IMAGE_CHANNELS = params['data']['meta']['images']['channels']
-CLASS_COUNT = params['data']['meta']['classes']['count']
+(
+    _,
+    TEST_SET_PATH,
+    BATCH_SIZE,
+    _,
+    CLASS_COUNT,
+    IMAGE_WIDTH,
+    IMAGE_HEIGHT,
+    IMAGE_CHANNELS
+) = params_test()
 
 
 @pytest.fixture

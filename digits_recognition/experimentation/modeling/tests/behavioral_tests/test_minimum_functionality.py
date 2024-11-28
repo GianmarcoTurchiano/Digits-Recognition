@@ -1,27 +1,23 @@
 import pytest
 import torch
-import yaml
 
 from digits_recognition.experimentation.modeling.evaluate import setup_components
 from digits_recognition.infer_labels import infer_labels
+from digits_recognition.experimentation.modeling.tests.params import params_test
 
 
-with open('params.yaml', 'r') as file:
-    params = yaml.safe_load(file)
+(
+    MODEL_PATH,
+    _,
+    BATCH_SIZE,
+    RANDOM_SEED,
+    CLASS_COUNT,
+    IMAGE_WIDTH,
+    IMAGE_HEIGHT,
+    IMAGE_CHANNELS
+) = params_test()
 
-data_params = params['data']
-evaluation_params = params['evaluation']
-data_meta_params = data_params['meta']
-data_meta_images_params = data_meta_params['images']
-
-MODEL_PATH = params['model']
-TEST_SET_PATH = 'digits_recognition/experimentation/modeling/behavioral_tests/data_minimum_functionality.pkl'
-BATCH_SIZE = evaluation_params['batch_size']
-RANDOM_SEED = evaluation_params['random_seed']
-CLASS_COUNT = data_meta_params['classes']['count']
-IMAGE_WIDTH = data_meta_images_params['width']
-IMAGE_HEIGHT = data_meta_images_params['height']
-IMAGE_CHANNELS = data_meta_images_params['channels']
+TEST_SET_PATH = 'digits_recognition/experimentation/modeling/tests/behavioral_tests/data_minimum_functionality.pkl'
 
 
 @pytest.fixture
