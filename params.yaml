@@ -42,3 +42,5 @@ dagshub:
 mlflow:
   model_name: GiaNet
   experiment_name: '"Modified LeNet-5 model"'
+
+emissions_path: emissions.csv

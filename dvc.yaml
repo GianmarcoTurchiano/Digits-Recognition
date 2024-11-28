@@ -68,6 +68,7 @@ stages:
       --repo_owner ${dagshub.repo_owner}
       --repo_name ${dagshub.repo_name}
       --experiment_name ${mlflow.experiment_name}
+      --emissions_path ${emissions_path}
     deps:
     - digits_recognition/experimentation/modeling/classifier.py
     - digits_recognition/experimentation/modeling/train.py
@@ -75,6 +76,7 @@ stages:
     - ${data.processed.train_set}
     outs:
     - ${model}
+    - ${emissions_path}
   evaluate:
     cmd: python digits_recognition/experimentation/modeling/evaluate.py
       --test_set_path ${data.processed.test_set}
@@ -87,6 +89,9 @@ stages:
       --repo_owner ${dagshub.repo_owner}
       --repo_name ${dagshub.repo_name}
       --experiment_name ${mlflow.experiment_name}
+      --emissions_path ${emissions_path}
     deps:
     - ${data.processed.test_set}
     - ${model}
+    outs:
+    - ${emissions_path}

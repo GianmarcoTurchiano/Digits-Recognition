@@ -10,6 +10,7 @@ from torch import optim
 from torch.optim.lr_scheduler import PolynomialLR
 from tqdm import tqdm
 import dagshub
+from codecarbon import EmissionsTracker
 
 from digits_recognition.experimentation.modeling.dataset import get_data_loader
 from digits_recognition.inference import infer_logits
@@ -18,7 +19,7 @@ from digits_recognition.experimentation.modeling.classifier import init_model
 
 def training_step(model, loader, device, optimizer, criterion):
     """
-    Training step, called once each epoch.
+    Training step, called once per epoch.
     """
     model.train()
 
@@ -46,7 +47,7 @@ def training_step(model, loader, device, optimizer, criterion):
 
 def validation_step(model, loader, device, criterion):
     """
-    Validation step, called once each epoch.
+    Validation step, called once per epoch.
     """
     model.eval()
 
@@ -176,6 +177,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int)
     parser.add_argument('--polynomial_scheduler_power', type=float)
     parser.add_argument('--train_data_augmentation', action='store_true')
+    parser.add_argument('--emissions_path', type=str)
 
     args = parser.parse_args()
 
@@ -205,6 +207,14 @@ if __name__ == '__main__':
         args.train_data_augmentation,
         args.random_seed
     )
+
+    tracker = EmissionsTracker(
+        project_name='Training',
+        save_to_file=True,
+        output_file=args.emissions_path
+    )
+
+    tracker.start()
 
     best_val_loss = float('inf')
     epochs_no_improve = 0
@@ -256,8 +266,11 @@ if __name__ == '__main__':
 
         scheduler.step()
 
+    tracker.stop()
+
     model_data = torch.load(args.model_path, weights_only=True)
 
     model.load_state_dict(model_data['weights'])
     mlflow.pytorch.log_model(model, "model")
+
     mlflow.end_run()

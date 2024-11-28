@@ -14,6 +14,7 @@ from sklearn.metrics import (
 )
 from tqdm import tqdm
 import dagshub
+from codecarbon import EmissionsTracker
 
 from digits_recognition.experimentation.modeling.classifier import init_model
 from digits_recognition.experimentation.modeling.dataset import get_data_loader
@@ -137,6 +138,7 @@ if __name__ == '__main__':
     parser.add_argument('--repo_owner', type=str)
     parser.add_argument('--repo_name', type=str)
     parser.add_argument('--experiment_name', type=str)
+    parser.add_argument('--emissions_path', type=str)
 
     args = parser.parse_args()
 
@@ -151,7 +153,17 @@ if __name__ == '__main__':
     )
 
     with mlflow.start_run(run_id=run_id):
+        tracker = EmissionsTracker(
+            project_name='Inference',
+            save_to_file=True,
+            output_file=args.emissions_path
+        )
+
+        tracker.start()
+
         all_labels, all_preds = inference_step(model, device, test_loader)
+
+        tracker.stop()
 
         (
             accuracy,

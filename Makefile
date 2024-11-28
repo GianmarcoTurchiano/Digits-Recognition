@@ -81,6 +81,10 @@ build_container:
 start_container:
 	docker start -a digits-container
 
+.PHONY: show_emissions
+show_emissions:
+	carbonboard --filepath="emissions.csv" --port=3333
+
 #################################################################################
 # PROJECT RULES                                                                 #
 #################################################################################
