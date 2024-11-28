@@ -9,19 +9,25 @@ from digits_recognition.experimentation.modeling.dataset import (
     data_augmentation
 )
 from digits_recognition.experimentation.modeling.evaluate import setup_components
+from digits_recognition.infer_labels import infer_labels
 
 
 with open('params.yaml', 'r') as file:
     params = yaml.safe_load(file)
 
+data_params = params['data']
+evaluation_params = params['evaluation']
+data_meta_params = data_params['meta']
+data_meta_images_params = data_meta_params['images']
+
 MODEL_PATH = params['model']
-TEST_SET_PATH = params['data']['processed']['test_set']
-BATCH_SIZE = params['evaluation']['batch_size']
-RANDOM_SEED = params['evaluation']['random_seed']
-IMAGE_WIDTH = params['data']['meta']['images']['width']
-IMAGE_HEIGHT = params['data']['meta']['images']['height']
-IMAGE_CHANNELS = params['data']['meta']['images']['channels']
-CLASS_COUNT = params['data']['meta']['classes']['count']
+TEST_SET_PATH = data_params['processed']['test_set']
+BATCH_SIZE = evaluation_params['batch_size']
+RANDOM_SEED = evaluation_params['random_seed']
+CLASS_COUNT = data_meta_params['classes']['count']
+IMAGE_WIDTH = data_meta_images_params['width']
+IMAGE_HEIGHT = data_meta_images_params['height']
+IMAGE_CHANNELS = data_meta_images_params['channels']
 
 
 @pytest.fixture
@@ -64,18 +70,13 @@ def test_invariance(components, transformation):
         transformed_images = [transformation(pil_image) for pil_image in pil_images]
 
         # Convert the list of transformed images back to tensors
-        transformed_images = torch.stack([F.to_tensor(transformed_image) for transformed_image in transformed_images]).to(device)
+        transformed_images = torch.stack([F.to_tensor(transformed_image) for transformed_image in transformed_images])
 
-        images = images.to(device)
+        preds_original = infer_labels(model, device, images)
+        preds_transformed = infer_labels(model, device, transformed_images)
 
-        model_prediction_original = model(images)
-        predicted_label_original = torch.argmax(model_prediction_original, dim=1)
-
-        model_prediction_transformed = model(transformed_images)
-        predicted_label_transformed = torch.argmax(model_prediction_transformed, dim=1)
-
-        total_cases += predicted_label_original.size(0)
-        invariant_cases += torch.sum(predicted_label_original == predicted_label_transformed).item()
+        total_cases += preds_original.size(0)
+        invariant_cases += torch.sum(preds_original == preds_transformed).item()
 
     threshold = 95
 
