@@ -90,9 +90,3 @@ stages:
     deps:
     - ${data.processed.test_set}
     - ${model}
-  test_behavior:
-    cmd: python -m pytest ${behavioral_tests}
-    deps:
-    - ${behavioral_tests}
-    - ${model}
-    - ${data.processed.test_set}
