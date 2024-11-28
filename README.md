@@ -2,7 +2,7 @@
 
 <a target="_blank" href="https://cookiecutter-data-science.drivendata.org/">
     <img src="https://img.shields.io/badge/CCDS-Project%20template-328F97?logo=cookiecutter" />
-</a> <img src="https://github.com/GianmarcoTurchiano/Digits-Recognition/workflows/qa.yaml/badge.svg" />
+</a> <img src="https://github.com/GianmarcoTurchiano/Digits-Recognition/workflows/quality_assurance_workflow/badge.svg" />
 
 A simple deep learning exercise based on a classical dataset.
 
