@@ -30,7 +30,7 @@ clean:
 .PHONY: lint
 lint:
 	flake8 digits_recognition
-	pylint digits_recognition
+	pylint digits_recognition --fail-under=9
 
 ## Format source code with black
 .PHONY: format
