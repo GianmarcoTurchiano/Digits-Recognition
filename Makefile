@@ -85,6 +85,14 @@ start_container:
 show_emissions:
 	carbonboard --filepath="emissions.csv" --port=3333
 
+.PHONY: pipeline_check
+pipeline_check:
+	dvc repro --dry
+
+.PHONY: update_emissions
+update_emissions:
+	dvc add emissions.csv
+
 #################################################################################
 # PROJECT RULES                                                                 #
 #################################################################################
