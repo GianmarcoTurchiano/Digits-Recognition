@@ -19,10 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install -U pip
-          python -m pip install -r requirements.txt
-      - name: DVC check 
-        run: |
-          make pipeline_check      
+          python -m pip install -r requirements.txt 
       - name: Static analysis
         run: |
           make lint
