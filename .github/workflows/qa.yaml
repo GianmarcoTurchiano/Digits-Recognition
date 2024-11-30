@@ -18,7 +18,8 @@ jobs:
           python-version: 3.12.7
       - name: Install dependencies
         run: |
-          make requirements
+          python -m pip install -U pip
+	        python -m pip install -r requirements.txt
       - name: DVC check 
         run: |
           make pipeline_check      
