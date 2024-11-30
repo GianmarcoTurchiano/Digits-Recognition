@@ -1,0 +1,6 @@
+outs:
+- md5: 000f452c8bb6d4131dc4c01f5f5a8b8f
+  size: 360
+  isexec: true
+  hash: md5
+  path: emissions.csv
