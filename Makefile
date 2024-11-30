@@ -9,7 +9,7 @@ REQUIREMENTS_FILE_NAME = requirements.in
 DOCKER_IMAGE_NAME = digits-image
 DOCKER_CONTAINER_NAME = digits-container
 EMISSIONS_FILE_NAME = emissions.csv
-PYTHON_INTERPRETER = $(PYTHON_ENV_NAME)/bin/python
+PYTHON_INTERPRETER = python
 
 #################################################################################
 # COMMANDS                                                                      #
@@ -19,7 +19,7 @@ PYTHON_INTERPRETER = $(PYTHON_ENV_NAME)/bin/python
 .PHONY: create_environment
 create_environment:
 	python -m venv $(PYTHON_ENV_NAME)
-	@echo "Virtual environment created! Use '. $(PYTHON_INTERPRETER)' to activate."
+	@echo "Virtual environment created! Use '. $(PYTHON_ENV_NAME)/bin/python' to activate."
 
 ## Install Python Dependencies
 .PHONY: requirements
@@ -44,9 +44,10 @@ clean:
 pipeline_check:
 	dvc repro --dry
 
-## Adds the emissions file to the DVC repo.
-.PHONY: update_emissions
-update_emissions:
+## Reproduces experiments
+.PHONY: repro
+repro:
+	dvc repro
 	dvc add $(EMISSIONS_FILE_NAME)
 
 ## Lint using flake8 and black (use `make format` to do formatting)
