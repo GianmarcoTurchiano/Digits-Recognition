@@ -209,7 +209,7 @@ if __name__ == '__main__':
     )
 
     tracker = EmissionsTracker(
-        project_name='Training',
+        project_name=f'Training {args.experiment_name}',
         save_to_file=True,
         output_file=args.emissions_path,
         log_level='critical'

@@ -31,9 +31,9 @@ training:
   batch_size: 64
   patience: 20
   learning_rate: 0.001
-  weight_decay: 1.5e-3
+  weight_decay: 0.5e-3
   random_seed: 42
-  polynomial_scheduler_power: 0.0
+  polynomial_scheduler_power: 1.0
 
 dagshub:
   repo_owner: GianmarcoTurchiano

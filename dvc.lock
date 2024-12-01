@@ -70,7 +70,7 @@ stages:
     cmd: python digits_recognition/experimentation/modeling/train.py --train_set_path
       ./data/processed/train_set.pkl --val_set_path ./data/processed/val_set.pkl --model_path
       ./models/digit_classifier.pth --patience 20 --epochs 100 --learning_rate 0.001
-      --weight_decay 0.00075 --random_seed 42 --batch_size 64 --polynomial_scheduler_power
+      --weight_decay 0.0005 --random_seed 42 --batch_size 64 --polynomial_scheduler_power
       1.0 --image_width 28 --image_height 28 --image_channels 1 --classes 10 --repo_owner
       GianmarcoTurchiano --repo_name Digits-Recognition --experiment_name "Modified
       LeNet-5 model" --emissions_path emissions.csv
@@ -92,13 +92,13 @@ stages:
       isexec: true
     - path: digits_recognition/experimentation/modeling/train.py
       hash: md5
-      md5: e62e466a76a828ca96a7601bb15ece96
-      size: 7752
+      md5: 1f78482d1809c0ada5af1ef6ae4ed78f
+      size: 7776
       isexec: true
     outs:
     - path: ./models/digit_classifier.pth
       hash: md5
-      md5: 7b429f511e38998ea3859cc031258eb6
+      md5: 2b7135045347b0f6c27e96d91e3ea9fa
       size: 1107382
       isexec: true
   evaluate:
@@ -115,14 +115,8 @@ stages:
       isexec: true
     - path: ./models/digit_classifier.pth
       hash: md5
-      md5: 7b429f511e38998ea3859cc031258eb6
+      md5: 2b7135045347b0f6c27e96d91e3ea9fa
       size: 1107382
-      isexec: true
-    outs:
-    - path: emissions.csv
-      hash: md5
-      md5: 333dc83a5b1bade811f7287934135e22
-      size: 840
       isexec: true
   convert:
     cmd: python digits_recognition/experimentation/dataset/convert.py --path ./data/interim/unzipped

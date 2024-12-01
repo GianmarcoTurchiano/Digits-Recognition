@@ -154,7 +154,7 @@ if __name__ == '__main__':
 
     with mlflow.start_run(run_id=run_id):
         tracker = EmissionsTracker(
-            project_name='Inference',
+            project_name=f'Inference {args.experiment_name}',
             save_to_file=True,
             output_file=args.emissions_path,
             log_level='critical'
