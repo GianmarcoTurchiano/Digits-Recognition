@@ -1,5 +1,7 @@
 FROM python:3.12.7
 
+ENV PIP_DEFAULT_TIMEOUT=100
+
 # Install system dependencies for OpenCV
 RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
