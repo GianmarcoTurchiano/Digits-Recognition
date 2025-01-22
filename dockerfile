@@ -1,6 +1,7 @@
 FROM python:3.12.7
 
 ENV PIP_DEFAULT_TIMEOUT=100
+ENV PIP_NO_CACHE_DIR=true
 
 # Install system dependencies for OpenCV
 RUN apt-get update && apt-get install -y \
