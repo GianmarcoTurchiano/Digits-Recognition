@@ -11,13 +11,14 @@ from fastapi.staticfiles import StaticFiles
 import cv2
 import numpy as np
 
-
 from digits_recognition.api.mlflow_model_setup import mlflow_model_setup
 from digits_recognition.api.inference import (
     compute_predictions,
     compute_probabilities,
     annotate_image_with_predictions
 )
+
+from digits_recognition.api.monitoring import instrumentator
 
 
 model, device = mlflow_model_setup()
@@ -27,6 +28,7 @@ torch.no_grad()
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="./digits_recognition/api/static"), name="static")
+instrumentator.instrument(app).expose(app, include_in_schema=False, should_gzip=True)
 
 
 @app.get("/")
