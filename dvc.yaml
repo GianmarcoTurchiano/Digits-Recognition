@@ -25,6 +25,13 @@ stages:
     deps:
     - digits_recognition/experimentation/dataset/check.py
     - ${data.interim.unzipped}
+  drift:
+    cmd: python digits_recognition/experimentation/dataset/drift.py
+      --path ${data.interim.unzipped}
+      --p_value 0.05
+    deps:
+    - digits_recognition/experimentation/dataset/drift.py
+    - ${data.interim.unzipped}
   convert:
     cmd: python digits_recognition/experimentation/dataset/convert.py
       --path ${data.interim.unzipped}
