@@ -4,8 +4,14 @@
 #
 #    pip-compile requirements.in
 #
--e git+https://github.com/GianmarcoTurchiano/Digits-Recognition@10af0ee4eb73fd074bdf445cc1e46cee6f3bfe27#egg=digits_recognition
+-e git+https://github.com/GianmarcoTurchiano/Digits-Recognition/@e35cf98db15b67a282e58c8edfc8e16aa387d044#egg=digits_recognition
     # via -r requirements.in
+absl-py==2.1.0
+    # via
+    #   -r requirements.in
+    #   keras
+    #   tensorboard
+    #   tensorflow
 aiobotocore[boto3]==2.15.2
     # via
     #   -r requirements.in
@@ -39,6 +45,8 @@ alembic==1.14.0
     # via
     #   -r requirements.in
     #   mlflow
+alibi==0.2.3
+    # via -r requirements.in
 altair==4.2.2
     # via
     #   -r requirements.in
@@ -79,6 +87,10 @@ asttokens==2.4.1
     # via
     #   -r requirements.in
     #   stack-data
+astunparse==1.6.3
+    # via
+    #   -r requirements.in
+    #   tensorflow
 asyncssh==2.18.0
     # via
     #   -r requirements.in
@@ -101,6 +113,10 @@ backoff==2.2.1
     #   -r requirements.in
     #   gql
     #   posthog
+beautifulsoup4==4.12.3
+    # via
+    #   -r requirements.in
+    #   alibi
 billiard==4.2.1
     # via
     #   -r requirements.in
@@ -111,6 +127,10 @@ blinker==1.9.0
     # via
     #   -r requirements.in
     #   flask
+blis==1.2.0
+    # via
+    #   -r requirements.in
+    #   thinc
 boto3==1.35.36
     # via
     #   -r requirements.in
@@ -135,6 +155,12 @@ cachetools==5.5.0
     #   -r requirements.in
     #   google-auth
     #   mlflow-skinny
+catalogue==2.0.10
+    # via
+    #   -r requirements.in
+    #   spacy
+    #   srsly
+    #   thinc
 celery==5.4.0
     # via
     #   -r requirements.in
@@ -183,6 +209,10 @@ click-repl==0.3.0
     # via
     #   -r requirements.in
     #   celery
+cloudpathlib==0.20.0
+    # via
+    #   -r requirements.in
+    #   weasel
 cloudpickle==3.1.0
     # via
     #   -r requirements.in
@@ -198,6 +228,11 @@ comm==0.2.2
     #   -r requirements.in
     #   ipykernel
     #   ipywidgets
+confection==0.1.5
+    # via
+    #   -r requirements.in
+    #   thinc
+    #   weasel
 configargparse==1.7
     # via
     #   -r requirements.in
@@ -220,6 +255,12 @@ cycler==0.12.1
     # via
     #   -r requirements.in
     #   matplotlib
+cymem==2.0.11
+    # via
+    #   -r requirements.in
+    #   preshed
+    #   spacy
+    #   thinc
 dacite==1.6.0
     # via
     #   -r requirements.in
@@ -372,6 +413,10 @@ flask-login==0.6.3
     # via
     #   -r requirements.in
     #   locust
+flatbuffers==25.1.21
+    # via
+    #   -r requirements.in
+    #   tensorflow
 flatten-dict==0.4.2
     # via
     #   -r requirements.in
@@ -407,6 +452,10 @@ funcy==2.0
     #   dvc-task
     #   gto
     #   scmrepo
+gast==0.6.0
+    # via
+    #   -r requirements.in
+    #   tensorflow
 gevent==24.11.1
     # via
     #   -r requirements.in
@@ -429,6 +478,10 @@ google-auth==2.36.0
     # via
     #   -r requirements.in
     #   databricks-sdk
+google-pasta==0.2.0
+    # via
+    #   -r requirements.in
+    #   tensorflow
 gql[requests]==3.5.0
     # via
     #   -r requirements.in
@@ -458,6 +511,11 @@ greenlet==3.1.1
     #   -r requirements.in
     #   gevent
     #   sqlalchemy
+grpcio==1.69.0
+    # via
+    #   -r requirements.in
+    #   tensorboard
+    #   tensorflow
 gto==1.7.1
     # via
     #   -r requirements.in
@@ -471,6 +529,11 @@ h11==0.14.0
     #   -r requirements.in
     #   httpcore
     #   uvicorn
+h5py==3.12.1
+    # via
+    #   -r requirements.in
+    #   keras
+    #   tensorflow
 httpcore==1.0.6
     # via
     #   -r requirements.in
@@ -491,6 +554,10 @@ idna==3.10
     #   httpx
     #   requests
     #   yarl
+imageio==2.37.0
+    # via
+    #   -r requirements.in
+    #   scikit-image
 importlib-metadata==8.5.0
     # via
     #   -r requirements.in
@@ -533,6 +600,7 @@ jinja2==3.1.4
     #   flask
     #   great-expectations
     #   mlflow
+    #   spacy
     #   torch
 jmespath==1.0.1
     # via
@@ -569,6 +637,10 @@ jwcrypto==1.5.6
     # via
     #   -r requirements.in
     #   fief-client
+keras==3.8.0
+    # via
+    #   -r requirements.in
+    #   tensorflow
 kiwisolver==1.4.7
     # via
     #   -r requirements.in
@@ -579,6 +651,22 @@ kombu==5.4.2
     #   celery
     #   dvc
     #   dvc-task
+langcodes==3.5.0
+    # via
+    #   -r requirements.in
+    #   spacy
+language-data==1.3.0
+    # via
+    #   -r requirements.in
+    #   langcodes
+lazy-loader==0.4
+    # via
+    #   -r requirements.in
+    #   scikit-image
+libclang==18.1.1
+    # via
+    #   -r requirements.in
+    #   tensorflow
 locust==2.32.6
     # via -r requirements.in
 lxml==5.3.0
@@ -589,10 +677,15 @@ mako==1.3.6
     # via
     #   -r requirements.in
     #   alembic
+marisa-trie==1.2.1
+    # via
+    #   -r requirements.in
+    #   language-data
 markdown==3.7
     # via
     #   -r requirements.in
     #   mlflow
+    #   tensorboard
 markdown-it-py==3.0.0
     # via
     #   -r requirements.in
@@ -630,6 +723,11 @@ mistune==3.0.2
     # via
     #   -r requirements.in
     #   great-expectations
+ml-dtypes==0.4.1
+    # via
+    #   -r requirements.in
+    #   keras
+    #   tensorflow
 mlflow==2.17.2
     # via -r requirements.in
 mlflow-skinny==2.17.2
@@ -653,11 +751,21 @@ multidict==6.1.0
     #   -r requirements.in
     #   aiohttp
     #   yarl
+murmurhash==1.0.12
+    # via
+    #   -r requirements.in
+    #   preshed
+    #   spacy
+    #   thinc
 mypy-extensions==1.0.0
     # via
     #   -r requirements.in
     #   black
     #   typing-inspect
+namex==0.0.8
+    # via
+    #   -r requirements.in
+    #   keras
 nest-asyncio==1.6.0
     # via
     #   -r requirements.in
@@ -667,20 +775,33 @@ networkx==3.4.2
     # via
     #   -r requirements.in
     #   dvc
+    #   scikit-image
     #   torch
 numpy==1.26.4
     # via
     #   -r requirements.in
+    #   alibi
     #   altair
+    #   blis
     #   contourpy
     #   great-expectations
+    #   h5py
+    #   imageio
+    #   keras
     #   matplotlib
+    #   ml-dtypes
     #   mlflow
     #   opencv-python
     #   pandas
     #   pyarrow
+    #   scikit-image
     #   scikit-learn
     #   scipy
+    #   spacy
+    #   tensorboard
+    #   tensorflow
+    #   thinc
+    #   tifffile
     #   torchvision
 nvidia-cublas-cu12==12.4.5.8
     # via
@@ -756,6 +877,14 @@ opentelemetry-semantic-conventions==0.49b1
     # via
     #   -r requirements.in
     #   opentelemetry-sdk
+opt-einsum==3.4.0
+    # via
+    #   -r requirements.in
+    #   tensorflow
+optree==0.14.0
+    # via
+    #   -r requirements.in
+    #   keras
 orjson==3.10.11
     # via
     #   -r requirements.in
@@ -771,14 +900,23 @@ packaging==24.2
     #   gunicorn
     #   hydra-core
     #   ipykernel
+    #   keras
+    #   lazy-loader
     #   marshmallow
     #   matplotlib
     #   mlflow-skinny
     #   plotly
     #   pytest
+    #   scikit-image
+    #   spacy
+    #   tensorboard
+    #   tensorflow
+    #   thinc
+    #   weasel
 pandas==2.1.4
     # via
     #   -r requirements.in
+    #   alibi
     #   altair
     #   codecarbon
     #   dagshub
@@ -806,8 +944,11 @@ pexpect==4.9.0
 pillow==11.0.0
     # via
     #   -r requirements.in
+    #   alibi
     #   dagshub-annotation-converter
+    #   imageio
     #   matplotlib
+    #   scikit-image
     #   torchvision
 pip-tools==7.4.1
     # via -r requirements.in
@@ -830,10 +971,18 @@ posthog==2.5.0
     # via
     #   -r requirements.in
     #   great-expectations
+preshed==3.0.9
+    # via
+    #   -r requirements.in
+    #   spacy
+    #   thinc
 prometheus-client==0.21.0
     # via
     #   -r requirements.in
     #   codecarbon
+    #   prometheus-fastapi-instrumentator
+prometheus-fastapi-instrumentator==7.0.2
+    # via -r requirements.in
 prompt-toolkit==3.0.36
     # via
     #   -r requirements.in
@@ -849,6 +998,8 @@ protobuf==5.28.3
     # via
     #   -r requirements.in
     #   mlflow-skinny
+    #   tensorboard
+    #   tensorflow
 psutil==6.1.0
     # via
     #   -r requirements.in
@@ -893,10 +1044,14 @@ pycparser==2.22
 pydantic==2.9.2
     # via
     #   -r requirements.in
+    #   confection
     #   dagshub-annotation-converter
     #   fastapi
     #   great-expectations
     #   gto
+    #   spacy
+    #   thinc
+    #   weasel
 pydantic-core==2.23.4
     # via
     #   -r requirements.in
@@ -996,6 +1151,7 @@ referencing==0.35.1
 requests==2.32.3
     # via
     #   -r requirements.in
+    #   alibi
     #   codecarbon
     #   dash
     #   databricks-sdk
@@ -1009,6 +1165,9 @@ requests==2.32.3
     #   mlflow-skinny
     #   posthog
     #   requests-toolbelt
+    #   spacy
+    #   tensorflow
+    #   weasel
 requests-toolbelt==1.0.0
     # via
     #   -r requirements.in
@@ -1024,6 +1183,7 @@ rich==13.9.4
     #   dagshub
     #   dvc
     #   gto
+    #   keras
     #   typer
 rpds-py==0.21.0
     # via
@@ -1052,15 +1212,21 @@ s3transfer==0.10.3
     # via
     #   -r requirements.in
     #   boto3
+scikit-image==0.25.0
+    # via
+    #   -r requirements.in
+    #   alibi
 scikit-learn==1.5.2
     # via
     #   -r requirements.in
+    #   alibi
     #   mlflow
 scipy==1.14.1
     # via
     #   -r requirements.in
     #   great-expectations
     #   mlflow
+    #   scikit-image
     #   scikit-learn
 scmrepo==3.3.8
     # via
@@ -1088,11 +1254,19 @@ six==1.16.0
     # via
     #   -r requirements.in
     #   asttokens
+    #   astunparse
     #   flatten-dict
+    #   google-pasta
     #   posthog
     #   python-dateutil
     #   retrying
+    #   tensorboard
+    #   tensorflow
     #   treelib
+smart-open==7.1.0
+    # via
+    #   -r requirements.in
+    #   weasel
 smmap==5.0.1
     # via
     #   -r requirements.in
@@ -1102,6 +1276,22 @@ sniffio==1.3.1
     #   -r requirements.in
     #   anyio
     #   httpx
+soupsieve==2.6
+    # via
+    #   -r requirements.in
+    #   beautifulsoup4
+spacy==3.8.4
+    # via
+    #   -r requirements.in
+    #   alibi
+spacy-legacy==3.0.12
+    # via
+    #   -r requirements.in
+    #   spacy
+spacy-loggers==1.0.5
+    # via
+    #   -r requirements.in
+    #   spacy
 sqlalchemy==2.0.36
     # via
     #   -r requirements.in
@@ -1115,6 +1305,13 @@ sqltrie==0.11.1
     # via
     #   -r requirements.in
     #   dvc-data
+srsly==2.5.1
+    # via
+    #   -r requirements.in
+    #   confection
+    #   spacy
+    #   thinc
+    #   weasel
 stack-data==0.6.3
     # via
     #   -r requirements.in
@@ -1123,6 +1320,7 @@ starlette==0.41.3
     # via
     #   -r requirements.in
     #   fastapi
+    #   prometheus-fastapi-instrumentator
 sympy==1.13.1
     # via
     #   -r requirements.in
@@ -1137,15 +1335,36 @@ tenacity==9.0.0
     #   -r requirements.in
     #   dagshub
     #   plotly
+tensorboard==2.18.0
+    # via
+    #   -r requirements.in
+    #   tensorflow
+tensorboard-data-server==0.7.2
+    # via
+    #   -r requirements.in
+    #   tensorboard
+tensorflow==2.18.0
+    # via
+    #   -r requirements.in
+    #   alibi
 termcolor==2.3.0
     # via
     #   -r requirements.in
     #   fire
+    #   tensorflow
     #   yaspin
+thinc==8.3.4
+    # via
+    #   -r requirements.in
+    #   spacy
 threadpoolctl==3.5.0
     # via
     #   -r requirements.in
     #   scikit-learn
+tifffile==2025.1.10
+    # via
+    #   -r requirements.in
+    #   scikit-image
 tomlkit==0.13.2
     # via
     #   -r requirements.in
@@ -1177,6 +1396,7 @@ tqdm==4.67.0
     #   fsspec
     #   great-expectations
     #   scmrepo
+    #   spacy
 traitlets==5.14.3
     # via
     #   -r requirements.in
@@ -1200,6 +1420,8 @@ typer==0.13.0
     #   -r requirements.in
     #   codecarbon
     #   gto
+    #   spacy
+    #   weasel
 types-python-dateutil==2.9.0.20241003
     # via
     #   -r requirements.in
@@ -1216,9 +1438,11 @@ typing-extensions==4.12.2
     #   great-expectations
     #   jwcrypto
     #   opentelemetry-sdk
+    #   optree
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
+    #   tensorflow
     #   torch
     #   typer
     #   typing-inspect
@@ -1257,10 +1481,20 @@ voluptuous==0.15.2
     #   -r requirements.in
     #   dvc
     #   dvc-studio-client
+wasabi==1.1.3
+    # via
+    #   -r requirements.in
+    #   spacy
+    #   thinc
+    #   weasel
 wcwidth==0.2.13
     # via
     #   -r requirements.in
     #   prompt-toolkit
+weasel==0.4.1
+    # via
+    #   -r requirements.in
+    #   spacy
 werkzeug==3.0.6
     # via
     #   -r requirements.in
@@ -1268,9 +1502,11 @@ werkzeug==3.0.6
     #   flask
     #   flask-login
     #   locust
+    #   tensorboard
 wheel==0.45.1
     # via
     #   -r requirements.in
+    #   astunparse
     #   pip-tools
 widgetsnbextension==4.0.13
     # via
@@ -1281,6 +1517,8 @@ wrapt==1.16.0
     #   -r requirements.in
     #   aiobotocore
     #   deprecated
+    #   smart-open
+    #   tensorflow
 yarl==1.17.1
     # via
     #   -r requirements.in
