@@ -1,8 +1,10 @@
 requirements.in
 
 # Data
-/data/
-/models/
+/data/*
+/models/*
+!/data/readme.md
+!/models/readme.md
 /mlruns/
 emissions.csv
 
