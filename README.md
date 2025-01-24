@@ -8,6 +8,8 @@ This is a simple digit classifier project made for a course in software enginnee
 
 - [ML canvas](canvas.md)
 
+--------
+
 ### Cookiecutter
 <a target="_blank" href="https://cookiecutter-data-science.drivendata.org/">
     <img src="https://img.shields.io/badge/CCDS-Project%20template-328F97?logo=cookiecutter" />
@@ -109,5 +111,7 @@ A Grafana dashboard was created to display some of those metrics.
 The APIs were deployed and then their uptime was tracked with Better Uptime. 
 
 ![image](uptime.png)
+
+Data drift between the train set and the test set is checked for in the [drift stage of the pipeline](digits_recognition/experimentation/dataset/drift.py) with a Kolmogorov-Smirnov test (Alibi Detect implementation) on the normalized pixel features.
 
 --------
